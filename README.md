@@ -21,9 +21,12 @@ TBD
 
 ## Peran atau aktor pengguna aplikasi
 Peran dibagi menjadi tiga:
--Guest (Dapat mengakses aplikasi dengan limitasi tertentu)
--Member (Dapat mengakses fitur aplikasi secara full)
--Admin (Dengan semua fitur 'Member', ditambah dengan beberapa fitur untuk mengakses sistem dari aplikasi)
+
+- **Guest** (Dapat mengakses aplikasi dengan limitasi tertentu)
+
+- **Member** (Dapat mengakses fitur aplikasi secara full)
+
+- **Admin** (Dengan semua fitur 'Member', ditambah dengan beberapa fitur untuk mengakses sistem dari aplikasi)
 
 ## Alur pengintegrasian dengan web service untuk terhubung dengan aplikasi web yang sudah dibuat saat Proyek Tengah Semester
 

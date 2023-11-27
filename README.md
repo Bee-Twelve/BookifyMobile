@@ -62,5 +62,5 @@ Peran dibagi menjadi tiga:
 5. Untuk mengirim data, akan digunakan `HTTP POST` yang menuju ke `end-point` untuk menyimpan data yang ada di database Django.
 
 ## Tautan Berita Acara
-Link menuju docs: \
-ristek.link/BeritaAcara_B12_Bookify
+Link menuju spreadsheets: \
+https://docs.google.com/spreadsheets/d/1VaBDcJ-J5F-sH7J9VAzLqw-nakx3iZ-IuiiSpFZ_VbU/edit#gid=27040104

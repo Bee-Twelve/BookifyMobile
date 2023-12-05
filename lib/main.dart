@@ -1,3 +1,4 @@
+import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:bookify/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/screens/landing_page.dart';
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(seedColor: Colors.indigo),
             useMaterial3: true,
           ),
-          home: LandingPage()));
+          home: ProductPage()));
 
   }
 }

@@ -4,7 +4,6 @@
 
 import 'dart:convert';
 
-
 List<Discussion> discussionFromJson(String str) => List<Discussion>.from(json.decode(str).map((x) => Discussion.fromJson(x)));
 
 String discussionToJson(List<Discussion> data) => json.encode(List<dynamic>.from(data.map((x) => x.toJson())));
@@ -34,7 +33,7 @@ class Discussion {
 }
 
 class Fields {
-  int user;
+  String user;
   int forum;
   String discuss;
 

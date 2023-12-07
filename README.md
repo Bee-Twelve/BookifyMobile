@@ -10,7 +10,7 @@
 
 - `Hilmi Atha Putra - 2206830050`
 
-- `Thariq Ziyad Al Farizi - 2206082865`
+- `Thariq Ziyad Al. Farizi - 2206082865`
 
 ## **Tautan APK**
 TBD

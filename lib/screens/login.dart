@@ -28,6 +28,7 @@ class LoginPage extends StatefulWidget {
   @override
   _LoginPageState createState() => _LoginPageState();
 }
+
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
@@ -52,7 +53,8 @@ class _LoginPageState extends State<LoginPage> {
                 height: screenSize.height * 0.3, // Adjust the height as needed
                 decoration: const BoxDecoration(
                   image: DecorationImage(
-                    image: AssetImage('assets/images/Ellipse_1.png'), // Path to your top image
+                    image: AssetImage(
+                        'assets/images/Ellipse_1.png'), // Path to your top image
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -62,7 +64,9 @@ class _LoginPageState extends State<LoginPage> {
               padding: const EdgeInsets.all(30.0),
               child: Column(
                 children: [
-                  SizedBox(height: screenSize.height * 0.35), // Adjust the space based on your design
+                  SizedBox(
+                      height: screenSize.height *
+                          0.35), // Adjust the space based on your design
                   const Text(
                     "Login",
                     style: TextStyle(
@@ -71,7 +75,9 @@ class _LoginPageState extends State<LoginPage> {
                       color: Color(0xFF53B9CB),
                     ),
                   ),
-                  const SizedBox(height: 30), // Space between "Login" title and form fields
+                  const SizedBox(
+                      height:
+                          30), // Space between "Login" title and form fields
                   TextFormField(
                     controller: _usernameController,
                     keyboardType: TextInputType.name,
@@ -93,7 +99,9 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(height: 40), // Space between the password field and the login button
+                  const SizedBox(
+                      height:
+                          40), // Space between the password field and the login button
                   ElevatedButton(
                     onPressed: () async {
                       String username = _usernameController.text;
@@ -103,7 +111,8 @@ class _LoginPageState extends State<LoginPage> {
                       // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
                       // Untuk menyambungkan Android emulator dengan Django pada localhost,
                       // gunakan URL http://10.0.2.2/
-                      final response = await request.login("http://10.0.2.2:8000/auth/login/", {
+                      final response = await request
+                          .login("http://10.0.2.2:8000/auth/login/", {
                         'username': username,
                         'password': password,
                       });
@@ -112,19 +121,19 @@ class _LoginPageState extends State<LoginPage> {
                         String uname = response['username'];
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => const HomePage()),
+                          MaterialPageRoute(builder: (context) => const Home()),
                         );
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
-                          ..showSnackBar(
-                              SnackBar(content: Text("$message Selamat datang, $uname.")));
+                          ..showSnackBar(SnackBar(
+                              content:
+                                  Text("$message Selamat datang, $uname.")));
                       } else {
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(
                             title: const Text('Login Gagal'),
-                            content:
-                            Text(response['message']),
+                            content: Text(response['message']),
                             actions: [
                               TextButton(
                                 child: const Text('OK'),
@@ -144,8 +153,9 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: const Text('Login'),
                   ),
-                  const SizedBox(height: 20), // Space between the login button and the logo
-
+                  const SizedBox(
+                      height:
+                          20), // Space between the login button and the logo
                 ],
               ),
             ),

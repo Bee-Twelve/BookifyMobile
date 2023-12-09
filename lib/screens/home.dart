@@ -1,22 +1,82 @@
-import 'package:bookify/widgets/right_drawer.dart';
 import 'package:flutter/material.dart';
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:bookify/shared/shared.dart';
+
+class Home extends StatefulWidget {
+  const Home({super.key});
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<Home> createState() => _BookLibraryState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _BookLibraryState extends State<Home> {
+  int _selectedIndex = 2;
+
+  // * = VARIABLES =
+  // TODO: ATUR PERGANTIAN PAGES, ARAHKAN KE WIDGET KALIAN MASING2
+  final List<Widget> _widgetOptions = [
+    const Text('BookReview Tab Content'),
+    const Text('BookDonation Tab Content'),
+    const Text('BookLibrary Tab Content'),
+    const Text('BookCommunity Tab Content'),
+    const Text('BookMark Tab Content'),
+    // other tabs content
+  ];
+  // * =============
+
+  // * == METHODS ==
+  void _onItemTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+  }
+  // * =============
+
+  // * === MAIN WIDGETS ===
   @override
   Widget build(BuildContext context) {
-    return  Scaffold(
-      appBar: AppBar(
-        title: const Text(
-          'Bookify',
-        ),
+    return Scaffold(
+      body: Column(
+        children: [
+          const TopBox(
+            username: 'Fulan',
+            module: 'BookLibrary',
+          ),
+          Expanded(
+            child: _widgetOptions.elementAt(_selectedIndex),
+          )
+        ],
       ),
-      endDrawer: const RightDrawer(),
+
+      // * === BOTTOM BAR ===
+      bottomNavigationBar: BottomBar(onItemTapped: _onItemTapped),
+      // * =================
+      floatingActionButton: HomeIcon(onHomePressed: () => _onItemTapped(2)),
+      floatingActionButtonLocation: const CustomFloatingActionButtonLocation(
+        FloatingActionButtonLocation.centerDocked,
+        15.0, // Adjust this value to position the FAB lower
+      ),
     );
   }
+  // * ====================
 }
+
+// * =============================================================
+// ? BELOW THIS LINE ARE SOME NECESSARY CUSTOM CLASS, U CAN IGNORE
+
+// * ===== CUSTOM FAB =====
+class CustomFloatingActionButtonLocation extends FloatingActionButtonLocation {
+  final FloatingActionButtonLocation location;
+  final double offsetY; // How much you want to offset the FAB vertically
+
+  const CustomFloatingActionButtonLocation(this.location, this.offsetY);
+
+  @override
+  Offset getOffset(ScaffoldPrelayoutGeometry scaffoldGeometry) {
+    // Get the original offset
+    final Offset offset = location.getOffset(scaffoldGeometry);
+    // Return the new offset with the Y value adjusted
+    return Offset(offset.dx, offset.dy + offsetY);
+  }
+}
+// * ======================

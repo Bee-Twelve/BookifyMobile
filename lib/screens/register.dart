@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       var response = await http.post(
-        Uri.parse('http://10.0.2.2:8000/auth/register/'),
+        Uri.parse('https://beetwelve.site/auth/register/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'username': username,
@@ -51,7 +51,9 @@ class _RegisterPageState extends State<RegisterPage> {
 
       if (response.statusCode == 200) {
         Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (context) => LoginPage()), // Navigate to login page on success
+          MaterialPageRoute(
+              builder: (context) =>
+                  LoginPage()), // Navigate to login page on success
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -64,7 +66,10 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Register"), backgroundColor: Colors.lightBlueAccent,),
+      appBar: AppBar(
+        title: Text("Register"),
+        backgroundColor: Colors.lightBlueAccent,
+      ),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -75,53 +80,63 @@ class _RegisterPageState extends State<RegisterPage> {
                 _buildTextField(
                   label: 'Username',
                   onChanged: (value) => username = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter a username' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter a username' : null,
                 ),
                 _buildPasswordField(
                   label: 'Password',
                   onChanged: (value) => password1 = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter a password' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter a password' : null,
                 ),
                 _buildPasswordField(
                   label: 'Confirm Password',
                   onChanged: (value) => password2 = value,
-                  validator: (value) => value != password1 ? 'Passwords do not match' : null,
+                  validator: (value) =>
+                      value != password1 ? 'Passwords do not match' : null,
                 ),
                 _buildDropdownField(
                   label: 'Role',
                   value: role,
                   items: _roles,
-                  onChanged: (String? newValue) => setState(() => role = newValue!),
+                  onChanged: (String? newValue) =>
+                      setState(() => role = newValue!),
                 ),
                 _buildTextField(
                   label: 'Full Name',
                   onChanged: (value) => fullName = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter your full name' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your full name' : null,
                 ),
                 _buildTextField(
                   label: 'Address',
                   onChanged: (value) => address = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter your address' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your address' : null,
                 ),
                 _buildTextField(
                   label: 'Phone Number',
                   onChanged: (value) => phoneNumber = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter your phone number' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your phone number' : null,
                 ),
                 _buildTextField(
                   label: 'Birthplace',
                   onChanged: (value) => birthplace = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter your birthplace' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your birthplace' : null,
                 ),
                 _buildTextField(
                   label: 'Birthdate (YYYY-MM-DD)',
                   onChanged: (value) => birthdate = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter your birthdate' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your birthdate' : null,
                 ),
                 _buildTextField(
                   label: 'Email',
                   onChanged: (value) => email = value,
-                  validator: (value) => value!.isEmpty ? 'Please enter your email' : null,
+                  validator: (value) =>
+                      value!.isEmpty ? 'Please enter your email' : null,
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(

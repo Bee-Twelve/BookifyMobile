@@ -16,7 +16,7 @@ class _HomePageState extends State<HomePage> {
           'Bookify',
         ),
       ),
-      endDrawer: RightDrawer(),
+      endDrawer: const RightDrawer(),
     );
   }
 }

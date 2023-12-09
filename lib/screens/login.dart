@@ -71,7 +71,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Color(0xFF53B9CB),
                     ),
                   ),
-                  SizedBox(height: 30), // Space between "Login" title and form fields
+                  const SizedBox(height: 30), // Space between "Login" title and form fields
                   TextFormField(
                     controller: _usernameController,
                     keyboardType: TextInputType.name,
@@ -82,7 +82,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Space between the text fields
+                  const SizedBox(height: 20), // Space between the text fields
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
@@ -93,7 +93,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 40), // Space between the password field and the login button
+                  const SizedBox(height: 40), // Space between the password field and the login button
                   ElevatedButton(
                     onPressed: () async {
                       String username = _usernameController.text;
@@ -112,7 +112,7 @@ class _LoginPageState extends State<LoginPage> {
                         String uname = response['username'];
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => const HomePage()),
                         );
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
@@ -137,14 +137,14 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       }
                     },
-                    child: const Text('Login'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF53B9CB),
+                      backgroundColor: const Color(0xFF53B9CB),
                       foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 50),
+                      minimumSize: const Size(double.infinity, 50),
                     ),
+                    child: const Text('Login'),
                   ),
-                  SizedBox(height: 20), // Space between the login button and the logo
+                  const SizedBox(height: 20), // Space between the login button and the logo
 
                 ],
               ),

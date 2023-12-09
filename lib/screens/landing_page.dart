@@ -1,10 +1,10 @@
 import 'package:bookify/screens/login.dart';
-import 'package:bookify/widgets/right_drawer.dart';
 import 'package:flutter/material.dart';
 
 class LandingPage extends StatelessWidget {
   const LandingPage({super.key});
 
+  @override
   Widget build(BuildContext context) {
     final Size screenSize = MediaQuery.of(context).size;
 
@@ -44,7 +44,7 @@ class LandingPage extends StatelessWidget {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            primary: Color(0xff53b9cb),
+                            backgroundColor: const Color(0xff53b9cb),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),
@@ -60,7 +60,7 @@ class LandingPage extends StatelessWidget {
                             //TODO
                           },
                           style: OutlinedButton.styleFrom(
-                            side: BorderSide(color: Color(0xff53b9cb)),
+                            side: const BorderSide(color: Color(0xff53b9cb)),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(10),
                             ),

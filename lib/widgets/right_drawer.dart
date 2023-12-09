@@ -1,4 +1,3 @@
-import 'package:bookify/screens/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -15,9 +14,9 @@ class RightDrawer extends StatelessWidget {
     return  Drawer(
       child: ListView(
         children: [
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Nama User'),
+          const ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Nama User'),
             // Bagian redirection ke MyHomePage
           ),
           ListTile(
@@ -76,7 +75,7 @@ class RightDrawer extends StatelessWidget {
               */
             },
           ),
-          ListTile(
+          const ListTile(
 
           ),
           ListTile(
@@ -99,7 +98,7 @@ class RightDrawer extends StatelessWidget {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("$message"),
+                  content: Text(message),
                 ));
               }
             },

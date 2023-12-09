@@ -1,3 +1,4 @@
+import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:bookify/screens/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
@@ -41,6 +42,10 @@ class RightDrawer extends StatelessWidget {
               TODO: Buatlah routing ke ShopFormPage di sini,
               setelah halaman ShopFormPage sudah dibuat.
               */
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductPage()),
+              );
             },
           ),
           ListTile(
@@ -86,7 +91,7 @@ class RightDrawer extends StatelessWidget {
             onTap: () async {
               final response = await request.logout(
                 // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-                  "https://bookify.site/auth/logout/");
+                  "http://10.0.2.2:8000/auth/logout/");
               String message = response["message"];
               if (response['status']) {
                 String uname = response["username"];

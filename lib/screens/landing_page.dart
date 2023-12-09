@@ -1,4 +1,5 @@
 import 'package:bookify/screens/login.dart';
+import 'package:bookify/screens/register.dart';
 import 'package:bookify/widgets/right_drawer.dart';
 import 'package:flutter/material.dart';
 
@@ -58,6 +59,9 @@ class LandingPage extends StatelessWidget {
                         OutlinedButton(
                           onPressed: () {
                             //TODO
+                            Navigator.pushReplacement(context,
+                                MaterialPageRoute(builder: (context) => const RegisterPage(),)
+                            );
                           },
                           style: OutlinedButton.styleFrom(
                             side: BorderSide(color: Color(0xff53b9cb)),

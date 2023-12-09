@@ -88,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(height: 20), // Space between the text fields
+                  const SizedBox(height: 20), // Space between the text fields
                   TextFormField(
                     controller: _passwordController,
                     obscureText: true,
@@ -121,7 +121,7 @@ class _LoginPageState extends State<LoginPage> {
                         String uname = response['username'];
                         Navigator.pushReplacement(
                           context,
-                          MaterialPageRoute(builder: (context) => HomePage()),
+                          MaterialPageRoute(builder: (context) => const Home()),
                         );
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
@@ -146,12 +146,12 @@ class _LoginPageState extends State<LoginPage> {
                         );
                       }
                     },
-                    child: const Text('Login'),
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF53B9CB),
+                      backgroundColor: const Color(0xFF53B9CB),
                       foregroundColor: Colors.white,
-                      minimumSize: Size(double.infinity, 50),
+                      minimumSize: const Size(double.infinity, 50),
                     ),
+                    child: const Text('Login'),
                   ),
                   SizedBox(
                       height:

@@ -33,7 +33,7 @@ class Discussion {
 }
 
 class Fields {
-  int user;
+  String user;
   int forum;
   String discuss;
 

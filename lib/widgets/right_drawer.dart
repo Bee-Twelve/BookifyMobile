@@ -1,5 +1,4 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
-import 'package:bookify/screens/landing_page.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -9,16 +8,15 @@ import '../screens/login.dart';
 class RightDrawer extends StatelessWidget {
   const RightDrawer({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    return  Drawer(
+    return Drawer(
       child: ListView(
         children: [
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Nama User'),
+          const ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Nama User'),
             // Bagian redirection ke MyHomePage
           ),
           ListTile(
@@ -81,16 +79,14 @@ class RightDrawer extends StatelessWidget {
               */
             },
           ),
-          ListTile(
-
-          ),
+          const ListTile(),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             // Bagian redirection ke ShopFormPage
             onTap: () async {
               final response = await request.logout(
-                // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+                  // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
                   "http://10.0.2.2:8000/auth/logout/");
               String message = response["message"];
               if (response['status']) {
@@ -104,7 +100,7 @@ class RightDrawer extends StatelessWidget {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("$message"),
+                  content: Text(message),
                 ));
               }
             },

@@ -129,7 +129,6 @@ class TopBox extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
 
@@ -181,7 +180,6 @@ class BottomBar extends StatelessWidget {
         ),
       ),
     );
-    ;
   }
 }
 // * ========================================================================
@@ -200,7 +198,7 @@ class HomeIcon extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 0),
       child: FloatingActionButton(
         shape: const CircleBorder(),
-        onPressed: () => onHomePressed,
+        onPressed: onHomePressed,
         backgroundColor:
             Colors.white, // Set background color of button, adjust as needed
         elevation: 5.0, // Set elevation for shadow, adjust as needed
@@ -209,7 +207,6 @@ class HomeIcon extends StatelessWidget {
             ),
       ),
     );
-    ;
   }
 }
 // * =======================================================================

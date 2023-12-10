@@ -8,7 +8,7 @@ import 'package:bookify/widgets/right_drawer.dart';
 import 'forumexpanded.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({Key? key}) : super(key: key);
+  const ProductPage({super.key});
 
   @override
   _ProductPageState createState() => _ProductPageState();

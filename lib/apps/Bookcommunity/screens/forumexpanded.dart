@@ -93,8 +93,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
         content: Text(message),
         actions: [
           TextButton(
-            child: Text('OK'),
-            onPressed: () => Navigator.pop(context)
+              child: Text('OK'),
+              onPressed: () => Navigator.pop(context)
           ),
         ],
       ),

@@ -1,7 +1,3 @@
-import 'package:bookify/screens/login.dart';
-import 'package:bookify/screens/register.dart';
-import 'package:bookify/widgets/right_drawer.dart';
-import 'package:flutter/material.dart';
 
 // class LandingPage extends StatelessWidget {
 //   const LandingPage({super.key});

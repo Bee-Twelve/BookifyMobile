@@ -77,16 +77,27 @@ class _BookLibraryState extends State<BookLibrary> {
                                 .cover // This will cover the bounds of the ClipRRect
                             ),
                       ),
-                      const SizedBox(
-                        width: 20,
-                      ),
-                      Text(
-                        book.title,
-                        style: const TextStyle(
-                          fontSize: 35,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
+                      Container(
+                        // decoration: BoxDecoration(
+                        //     border: Border.all(
+                        //   width: 2,
+                        //   color: Colors.black,
+                        // )),
+                        width: 150,
+                        height: 200,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            book.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
+                          ),
                         ),
                       ),
                     ],

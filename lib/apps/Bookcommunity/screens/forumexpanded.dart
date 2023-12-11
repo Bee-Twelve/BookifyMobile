@@ -167,4 +167,6 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
       ),
     );
   }
+
+
 }

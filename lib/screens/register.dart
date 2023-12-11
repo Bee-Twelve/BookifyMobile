@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'login.dart'; // Replace with your actual login page import
 
 class RegisterPage extends StatefulWidget {
-  const RegisterPage({Key? key}) : super(key: key);
+  const RegisterPage({super.key});
   static const ROUTE_NAME = '/register';
 
   @override
@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       var response = await http.post(
-        Uri.parse('https://beetwelve.site/auth/register/'),
+        Uri.parse('http://10.0.2.2:8000/auth/register/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'username': username,
@@ -53,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.of(context).pushReplacement(
           MaterialPageRoute(
               builder: (context) =>
-                  LoginPage()), // Navigate to login page on success
+                  const LoginPage()), // Navigate to login page on success
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -67,7 +67,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("Register"),
+        title: const Text("Register"),
         backgroundColor: Colors.lightBlueAccent,
       ),
       body: SingleChildScrollView(
@@ -138,13 +138,13 @@ class _RegisterPageState extends State<RegisterPage> {
                   validator: (value) =>
                       value!.isEmpty ? 'Please enter your email' : null,
                 ),
-                SizedBox(height: 20),
+                const SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: _register,
-                  child: Text('Register'),
                   style: ElevatedButton.styleFrom(
-                    minimumSize: Size(double.infinity, 50),
+                    minimumSize: const Size(double.infinity, 50),
                   ),
+                  child: const Text('Register'),
                 ),
               ],
             ),
@@ -164,7 +164,7 @@ class _RegisterPageState extends State<RegisterPage> {
       child: TextFormField(
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
         onChanged: onChanged,
         validator: validator,
@@ -183,7 +183,7 @@ class _RegisterPageState extends State<RegisterPage> {
         obscureText: true,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
         onChanged: onChanged,
         validator: validator,
@@ -203,7 +203,7 @@ class _RegisterPageState extends State<RegisterPage> {
         value: value,
         decoration: InputDecoration(
           labelText: label,
-          border: OutlineInputBorder(),
+          border: const OutlineInputBorder(),
         ),
         items: items.map<DropdownMenuItem<String>>((Map<String, String> item) {
           return DropdownMenuItem<String>(

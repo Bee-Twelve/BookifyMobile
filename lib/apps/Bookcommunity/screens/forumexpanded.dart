@@ -7,7 +7,7 @@ class ForumDetailPage extends StatelessWidget {
   final Forum forum;
   final List<Discussion> discussions;
 
-  const ForumDetailPage({Key? key, required this.forum, required this.discussions}) : super(key: key);
+  const ForumDetailPage({super.key, required this.forum, required this.discussions});
 
   @override
   Widget build(BuildContext context) {
@@ -20,13 +20,13 @@ class ForumDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
-            Text("Subject: ${forum.fields.subject}", style: TextStyle(fontSize: 18)),
-            SizedBox(height: 5),
-            Text("Description: ${forum.fields.description}", style: TextStyle(fontSize: 16)),
-            SizedBox(height: 5),
-            Text("by: ${forum.fields.user}", style: TextStyle(fontSize: 14)),
-            SizedBox(height: 5),
-            Text("Discussions:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("Subject: ${forum.fields.subject}", style: const TextStyle(fontSize: 18)),
+            const SizedBox(height: 5),
+            Text("Description: ${forum.fields.description}", style: const TextStyle(fontSize: 16)),
+            const SizedBox(height: 5),
+            Text("by: ${forum.fields.user}", style: const TextStyle(fontSize: 14)),
+            const SizedBox(height: 5),
+            const Text("Discussions:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             Expanded(
               child: ListView.builder(
                 itemCount: discussions.length,

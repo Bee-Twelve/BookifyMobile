@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:bookify/shared/shared.dart';
+import 'package:bookify/apps/booklibrary/booklibrary.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -17,7 +17,7 @@ class _BookLibraryState extends State<Home> {
   final List<Widget> _widgetOptions = [
     const Text('BookReview Tab Content'),
     const Text('BookDonation Tab Content'),
-    const Text('BookLibrary Tab Content'),
+    const BookLibrary(),
     const Text('BookCommunity Tab Content'),
     const Text('BookMark Tab Content'),
     // other tabs content

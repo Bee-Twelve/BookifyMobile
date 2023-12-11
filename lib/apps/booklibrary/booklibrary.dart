@@ -165,13 +165,18 @@ class _BookLibraryState extends State<BookLibrary> {
                           color: Colors.white,
                         ),
                       ),
-                      Text(
-                        ": ${book.author}",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          ": ${book.author}",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],

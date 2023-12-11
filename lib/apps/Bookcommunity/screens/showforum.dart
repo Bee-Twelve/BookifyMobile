@@ -16,13 +16,13 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   Future<List<Forum>> fetchForums() async {
-    var forumUrl = Uri.parse('http://10.0.2.2:8000/bookcommunity/show_json_forum/');
+    var forumUrl = Uri.parse('https://beetwelve.site/bookcommunity/show_json_forum/');
     var forumResponse = await http.get(forumUrl, headers: {"Content-Type": "application/json"});
     return forumFromJson(utf8.decode(forumResponse.bodyBytes));
   }
 
   Future<Map<int, List<Discussion>>> fetchDiscussions() async {
-    var discussionUrl = Uri.parse('http://10.0.2.2:8000/bookcommunity/show_json_discussion/');
+    var discussionUrl = Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
     var discussionResponse = await http.get(discussionUrl, headers: {"Content-Type": "application/json"});
     List<Discussion> discussions = discussionFromJson(utf8.decode(discussionResponse.bodyBytes));
 

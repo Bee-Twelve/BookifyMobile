@@ -26,7 +26,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   }
 
   Future<void> _fetchDiscussions() async {
-    var discussionUrl = Uri.parse('http://10.0.2.2:8000/bookcommunity/show_json_discussion/');
+    var discussionUrl = Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
     var response = await http.get(discussionUrl, headers: {"Content-Type": "application/json"});
     setState(() {
       _discussions = discussionFromJson(utf8.decode(response.bodyBytes))
@@ -69,7 +69,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
 
   Future<void> _addDiscussion(BuildContext context, int forumId, String discussionText) async {
     final cookieRequest = context.read<CookieRequest>();
-    String url = 'http://10.0.2.2:8000/bookcommunity/create_discussion_flutter/';
+    String url = 'https://beetwelve.site/bookcommunity/create_discussion_flutter/';
 
     var responseMap = await cookieRequest.post(
       url,

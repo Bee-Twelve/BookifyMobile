@@ -68,25 +68,27 @@ class _BookLibraryState extends State<BookLibrary> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(6),
+                        borderRadius: BorderRadius.circular(
+                            6), // Apply border radius here
                         child: Image.network(book.thumbnail,
-                            width: 150, height: 200, fit: BoxFit.cover),
+                            width: 150,
+                            height: 200,
+                            fit: BoxFit
+                                .cover // This will cover the bounds of the ClipRRect
+                            ),
+                      ),
+                      const SizedBox(
+                        width: 20,
                       ),
                       SizedBox(
-                        width: 150,
-                        height: 200,
-                        child: Align(
-                          alignment: Alignment.center,
-                          child: Text(
-                            book.title,
-                            overflow: TextOverflow.ellipsis,
-                            maxLines: 5,
-                            style: const TextStyle(
-                              fontSize: 20,
-                              fontFamily: 'Inter',
-                              fontWeight: FontWeight.w900,
-                              color: Colors.white,
-                            ),
+                        width: MediaQuery.of(context).size.width * .3,
+                        child: Text(
+                          book.title,
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
                           ),
                         ),
                       ),
@@ -134,9 +136,9 @@ class _BookLibraryState extends State<BookLibrary> {
                   // * ========== DETAILS (GENRE to ISBN) ==========
                   Row(
                     children: [
-                      Text(
-                        "${book.genre} ",
-                        style: const TextStyle(
+                      const Text(
+                        "Fiction ",
+                        style: TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w900,
@@ -165,18 +167,13 @@ class _BookLibraryState extends State<BookLibrary> {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(
-                        width: 250,
-                        child: Text(
-                          ": ${book.author}",
-                          overflow: TextOverflow.ellipsis,
-                          maxLines: 1,
-                          style: const TextStyle(
-                            fontSize: 15,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.normal,
-                            color: Colors.white,
-                          ),
+                      Text(
+                        ": ${book.author}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
                         ),
                       ),
                     ],

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:bookify/shared/shared.dart';
 import 'package:bookify/apps/booklibrary/booklibrary.dart';
+import 'package:bookify/apps/bookreview/bookreview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -11,11 +13,13 @@ class Home extends StatefulWidget {
 
 class _BookLibraryState extends State<Home> {
   int _selectedIndex = 2;
+  String _selectedModule = "Book Library";
+  String _username = "";
 
   // * = VARIABLES =
   // TODO: ATUR PERGANTIAN PAGES, ARAHKAN KE WIDGET KALIAN MASING2
   final List<Widget> _widgetOptions = [
-    const Text('BookReview Tab Content'),
+    const BookReview(),
     const Text('BookDonation Tab Content'),
     const BookLibrary(),
     const Text('BookCommunity Tab Content'),
@@ -26,11 +30,52 @@ class _BookLibraryState extends State<Home> {
 
   // * == METHODS ==
   void _onItemTapped(int index) {
+    if (index == 0) {
+      setState(() {
+        _selectedModule = "Book Review & Favorite";
+        _selectedIndex = index;
+      });
+    } else if (index == 1) {
+      setState(() {
+        _selectedModule = "Book Donation";
+        _selectedIndex = index;
+      });
+    } else if (index == 2) {
+      setState(() {
+        _selectedModule = "Book Library";
+        _selectedIndex = index;
+      });
+    } else if (index == 3) {
+      setState(() {
+        _selectedModule = "Book Community";
+        _selectedIndex = index;
+      });
+    } else {
+      setState(() {
+        _selectedModule = "Book Mark";
+        _selectedIndex = index;
+      });
+    }
+  }
+
+  // * =============
+  Future<void> loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uname = prefs.getString('username') ?? '';
+    print(uname);
     setState(() {
-      _selectedIndex = index;
+      _username = uname;
     });
   }
-  // * =============
+
+  @override
+  void initState() {
+    super.initState();
+    // fetchData();
+    loadUsername();
+
+    // booksFuture = loadMockBooksData();
+  }
 
   // * === MAIN WIDGETS ===
   @override
@@ -38,9 +83,9 @@ class _BookLibraryState extends State<Home> {
     return Scaffold(
       body: Column(
         children: [
-          const TopBox(
-            username: 'Fulan',
-            module: 'BookLibrary',
+          TopBox(
+            username: _username,
+            module: _selectedModule,
           ),
           Expanded(
             child: _widgetOptions.elementAt(_selectedIndex),

@@ -1,3 +1,4 @@
+import 'package:bookify/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 
@@ -7,6 +8,42 @@ class TopBox extends StatelessWidget {
   final String module;
 
   const TopBox({super.key, required this.username, required this.module});
+
+  void _showFilterPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildFilterOption(context, 'Book Favorite'),
+              _buildFilterOption(context, 'Genre 1'),
+              _buildFilterOption(context, 'Genre 2'),
+              _buildFilterOption(context, 'Genre 3'),
+              _buildFilterOption(context, 'Genre 4'),
+              _buildFilterOption(context, 'Genre 5'),
+              _buildFilterOption(context, 'Genre 6'),
+              _buildFilterOption(context, 'Genre 7'),
+              _buildFilterOption(context, 'Genre 8'),
+              _buildFilterOption(context, 'Genre 9'),
+              _buildFilterOption(context, 'Genre 10'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterOption(BuildContext context, String filterName) {
+    return ListTile(
+      title: Text(filterName),
+      onTap: () {
+        // TODO: Handle filter selection
+        Navigator.pop(context); // Close the bottom sheet after selection
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -37,7 +74,10 @@ class TopBox extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    // TODO: Navigate ke Profile Detail
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Profile()),
+                    );
                   },
                   child: SvgPicture.asset(
                     'assets/icons/profile_icon.svg',
@@ -67,7 +107,7 @@ class TopBox extends StatelessWidget {
                   // * SEARCH BAR
                   SizedBox(
                     height: 42,
-                    width: 167,
+                    width: MediaQuery.of(context).size.width * .7,
                     child: TextField(
                       decoration: InputDecoration(
                         border: OutlineInputBorder(
@@ -105,6 +145,7 @@ class TopBox extends StatelessWidget {
                   InkWell(
                     onTap: () {
                       // TODO: SHOW FILTER
+                      _showFilterPopup(context);
                     },
                     child: Container(
                       // margin: EdgeInsets.only(left: 10),

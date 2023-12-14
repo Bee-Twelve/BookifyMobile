@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Color(0xFF53B9CB),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                       height:
                           30), // Space between "Login" title and form fields
                   TextFormField(
@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  const SizedBox(
+                  SizedBox(
                       height:
                           40), // Space between the password field and the login button
                   ElevatedButton(
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: const Text('Login'),
                   ),
-                  const SizedBox(
+                  SizedBox(
                       height:
                           20), // Space between the login button and the logo
                 ],

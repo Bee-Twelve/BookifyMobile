@@ -1,3 +1,4 @@
+import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/shared/shared.dart';
 import 'package:bookify/apps/booklibrary/booklibrary.dart';
@@ -18,7 +19,7 @@ class _BookLibraryState extends State<Home> {
     const Text('BookReview Tab Content'),
     const Text('BookDonation Tab Content'),
     const BookLibrary(),
-    const Text('BookCommunity Tab Content'),
+    const ProductPage(),
     const Text('BookMark Tab Content'),
     // other tabs content
   ];

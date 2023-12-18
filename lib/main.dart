@@ -1,3 +1,4 @@
+import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth/pbp_django_auth.dart';
 import 'package:provider/provider.dart';
@@ -29,6 +30,6 @@ class MyApp extends StatelessWidget {
             // ? gunakan "home: const Home()));" klo mau skip login/register
             // ? untuk keperluan debugging/working-in-progress
             // home: const LoginOrReg()));
-            home: const Home()));
+            home: const LoginOrReg()));
   }
 }

@@ -39,9 +39,11 @@ class LandingPage extends StatelessWidget {
                       children: [
                         ElevatedButton(
                           onPressed: () {
-                            Navigator.pushReplacement(context,
-                                MaterialPageRoute(builder: (context) => const LoginPage(),)
-                            );
+                            Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                  builder: (context) => const LoginPage(),
+                                ));
                           },
                           style: ElevatedButton.styleFrom(
                             primary: Color(0xff53b9cb),
@@ -51,7 +53,8 @@ class LandingPage extends StatelessWidget {
                           ),
                           child: const Text(
                             'Login',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                            style: TextStyle(
+                                fontSize: 20, fontWeight: FontWeight.bold),
                           ),
                         ),
                         const SizedBox(height: 16),
@@ -67,7 +70,10 @@ class LandingPage extends StatelessWidget {
                           ),
                           child: const Text(
                             'Sign Up',
-                            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: Color(0xff53b9cb)),
+                            style: TextStyle(
+                                fontSize: 20,
+                                fontWeight: FontWeight.bold,
+                                color: Color(0xff53b9cb)),
                           ),
                         ),
                       ],

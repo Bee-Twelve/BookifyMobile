@@ -1,10 +1,10 @@
 import 'package:bookify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
-// import 'package:bookify/models/book_model.dart';
 import 'package:bookify/models/models.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
+import 'package:bookify/utils/provider_class.dart';
 
 class BookLibrary extends StatefulWidget {
   const BookLibrary({super.key});
@@ -14,13 +14,34 @@ class BookLibrary extends StatefulWidget {
 }
 
 class _BookLibraryState extends State<BookLibrary> {
+  @override
+  void initState() {
+    super.initState();
 
-  Future<List<BookDataset>> fetchBook(String query) async {
+    fetchBook('');
+    // Listen to the SearchQueryProvider
+    final searchQueryProvider =
+        Provider.of<SearchQueryProvider>(context, listen: false);
+    searchQueryProvider.addListener(() {
+      // Call fetchBook whenever the search query changes
+      fetchBook(searchQueryProvider.query);
+      print('halooooooooo');
+    });
+  }
+
+  // * ========== METHODS ==========
+  Future<void> fetchBook(String query) async {
     final request = Provider.of<CookieRequest>(context, listen: false);
+    final bookDataProvider =
+        Provider.of<BookDataProvider>(context, listen: false);
 
     var response = [];
     if (query == '') {
-      response = await request.get('/api/books/fetch-book/');
+      response = await request.get('/api/books/');
+      print('ini query kosong $response');
+    } else {
+      response = await request.get('/api/books/search?q=$query');
+      print('ini query ga kosonggg $response');
     }
 
     List<BookDataset> listBook = [];
@@ -29,8 +50,9 @@ class _BookLibraryState extends State<BookLibrary> {
         listBook.add(BookDataset.fromJson(book));
       }
     }
-    print(listBook[0].fields.description);
-    return listBook;
+
+    bookDataProvider.updateList(listBook);
+    bookDataProvider.setLoading(false);
   }
 
   void showDetailedInfo(BuildContext context, Fields book) {
@@ -410,108 +432,56 @@ class _BookLibraryState extends State<BookLibrary> {
     );
   }
 
+  // * ========== BUILD ==========
+
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<BookDataProvider>(
-      create: (_) {
-        BookDataProvider bdp = BookDataProvider();
-        bdp.setLoading(true);
-        bdp.updateList(fetchBook(''));
-        return bdp;
-      },
-      child: Consumer<BookDataProvider>(
-        builder: (context, provider, child) {
-          if (provider.loading) {
-            return const Center(child: CircularProgressIndicator());
+    return Consumer<BookDataProvider>(
+      builder: (context, provider, child) {
+        if (provider.loading) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          if (provider.listBook.isEmpty) {
+            return const Center(child: Text("Buku tidak ditemukan"));
           } else {
-            if (provider.listBook.isEmpty) {
-              return const Center(child: Text("Buku tidak ditemukan"));
-            } else {
-              return GridView.builder(
-                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                  crossAxisCount: 2,
-                  childAspectRatio: 0.65,
-                ),
-                itemCount: provider.listBook.length,
-                itemBuilder: (BuildContext context, int index) {
-                  return Padding(
-                    padding: const EdgeInsets.all(10),
-                    child: InkWell(
-                      onTap: () {
-                        showDetailedInfo(
-                            context, provider.listBook[index].fields);
-                      },
-                      child: Card(
-                        clipBehavior: Clip.antiAlias,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(10),
-                        ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Expanded(
-                              child: Image.network(
-                                provider.listBook[index].fields.thumbnail,
-                                fit: BoxFit.cover,
-                              ),
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.65,
+              ),
+              itemCount: provider.listBook.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: InkWell(
+                    onTap: () {
+                      showDetailedInfo(
+                          context, provider.listBook[index].fields);
+                    },
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              provider.listBook[index].fields.thumbnail,
+                              fit: BoxFit.cover,
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
-                  );
-                },
-              );
-            }
+                  ),
+                );
+              },
+            );
           }
-        },
-      ),
+        }
+      },
     );
-
-    // return FutureBuilder(
-    //   future: fetchProduct(request),
-    //   builder: (context, AsyncSnapshot snapshot) {
-    //     if (snapshot.hasData) {
-    //       List<BookDataset> books = snapshot.data!;
-    //       return GridView.builder(
-    //         gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-    //           crossAxisCount: 2,
-    //           childAspectRatio: 0.65,
-    //         ),
-    //         itemCount: books.length,
-    //         itemBuilder: (BuildContext context, int index) {
-    //           return Padding(
-    //             padding: const EdgeInsets.all(10),
-    //             child: InkWell(
-    //               onTap: () {
-    //                 showDetailedInfo(context, books[index]);
-    //               },
-    //               child: Card(
-    //                 clipBehavior: Clip.antiAlias,
-    //                 shape: RoundedRectangleBorder(
-    //                   borderRadius: BorderRadius.circular(10),
-    //                 ),
-    //                 child: Column(
-    //                   crossAxisAlignment: CrossAxisAlignment.stretch,
-    //                   children: [
-    //                     Expanded(
-    //                       child: Image.network(
-    //                         books[index].thumbnail,
-    //                         fit: BoxFit.cover,
-    //                       ),
-    //                     ),
-    //                   ],
-    //                 ),
-    //               ),
-    //             ),
-    //           );
-    //         },
-    //       );
-    //     } else if (snapshot.hasError) {
-    //       return Text('Error: ${snapshot.error}');
-    //     }
-    //     return const CircularProgressIndicator();
-    //   },
-    // );
   }
 }

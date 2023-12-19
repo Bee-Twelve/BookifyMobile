@@ -1,12 +1,27 @@
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 // * ============================== TOP BOX ==============================
-class TopBox extends StatelessWidget {
+class TopBox extends StatefulWidget {
   final String username;
   final String module;
 
   const TopBox({super.key, required this.username, required this.module});
+
+  @override
+  State<TopBox> createState() => _TopBoxState();
+}
+
+class _TopBoxState extends State<TopBox> {
+  late TextEditingController searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    searchController = TextEditingController();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +62,7 @@ class TopBox extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  "Hello $username!\n$module",
+                  "Hello ${widget.username}!\n${widget.module}",
                   style: const TextStyle(
                       fontSize: 20,
                       fontFamily: 'Inter',
@@ -69,7 +84,27 @@ class TopBox extends StatelessWidget {
                     height: 42,
                     width: 167,
                     child: TextField(
+                      // * Search Controller
+                      controller: searchController,
+                      onSubmitted: (String value) {
+                        print("ini value: $value");
+                        context.read<SearchQueryProvider>().setQuery(value);
+                      },
+                      // * Text Decoration
                       decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            print("ini klik tombol");
+                            context
+                                .read<SearchQueryProvider>()
+                                .setQuery(searchController.text);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset(
+                                'assets/icons/search_icon.svg'),
+                          ),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: const BorderSide(color: Colors.white),
@@ -91,11 +126,6 @@ class TopBox extends StatelessWidget {
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:
-                              SvgPicture.asset('assets/icons/search_icon.svg'),
-                        ),
                       ),
                     ),
                   ),

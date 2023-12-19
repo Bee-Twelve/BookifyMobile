@@ -4,7 +4,7 @@ import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/login_or_reg.dart';
-import 'package:bookify/models/models.dart';
+import 'package:bookify/utils/provider_class.dart';
 
 void main() {
   runApp(const MyApp());
@@ -24,6 +24,8 @@ class MyApp extends StatelessWidget {
           }),
           ChangeNotifierProvider<BookDataProvider>(
               create: (_) => BookDataProvider()),
+          ChangeNotifierProvider<SearchQueryProvider>(
+              create: (_) => SearchQueryProvider()),
         ],
         child: MaterialApp(
             title: 'Flutter App',
@@ -37,24 +39,5 @@ class MyApp extends StatelessWidget {
             // ? untuk keperluan debugging/working-in-progress
             home: const LoginOrReg()));
     // home: const Home()));
-  }
-}
-
-class BookDataProvider extends ChangeNotifier {
-  List<BookDataset> _listBook = [];
-  bool _loading = false;
-
-  List<BookDataset> get listBook => _listBook;
-  bool get loading => _loading;
-
-  Future<void> updateList(Future<List<BookDataset>> list) async {
-    _listBook = await list;
-    _loading = false;
-    notifyListeners();
-  }
-
-  void setLoading(bool b) {
-    _loading = b;
-    notifyListeners();
   }
 }

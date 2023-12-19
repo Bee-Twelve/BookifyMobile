@@ -22,8 +22,8 @@ class Profile extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: ElevatedButton(
               onPressed: () async {
-                final response =
-                    await request.logout("https://beetwelve.site/auth/logout/");
+                final response = await request
+                    .logout("https://beetwelve.site/authentication/logout/");
 
                 Navigator.pushReplacement(
                   context,

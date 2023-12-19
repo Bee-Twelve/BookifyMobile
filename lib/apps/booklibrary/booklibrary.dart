@@ -36,7 +36,7 @@ class _BookLibraryState extends State<BookLibrary> {
 
     var response = [];
     if (query == '') {
-      response = await request.get('/api/books/');
+      response = await request.get('/api/books/fetch-book/');
     } else {
       response = await request.get('/api/books/search?q=$query');
     }
@@ -149,7 +149,9 @@ class _BookLibraryState extends State<BookLibrary> {
                     height: 180,
                     child: SingleChildScrollView(
                       child: Text(
-                        book.description.replaceAll("â", "'"),
+                        book.description
+                            .replaceAll("â", "'")
+                            .replaceAll("", "-"),
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',

@@ -32,6 +32,7 @@ class _TopBoxState extends State<TopBox> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _buildFilterOption(context, 'Book Favorite'),
+              _buildFilterOption(context, 'All Genre'),
               _buildFilterOption(context, 'Fiction'),
               _buildFilterOption(context, 'Juvenile Fiction'),
               _buildFilterOption(context, 'Biography & Autobiography'),
@@ -55,6 +56,9 @@ class _TopBoxState extends State<TopBox> {
       onTap: () {
         // TODO: Handle filter selection
         Navigator.pop(context); // Close the bottom sheet after selection
+        if (filterName == 'All Genre') {
+          filterName = '';
+        }
         context.read<SearchQueryProvider>().setQuery(filterName);
       },
     );

@@ -4,6 +4,8 @@ import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/book_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -424,6 +426,82 @@ class _BookReviewState extends State<BookReview> {
         );
       },
     );
+  }
+
+  void addToFavorites() async {
+    final apiUrl = 'https://beetwelve.site/add-favorite-api/${widget.id}/';
+
+    final request = context.read<CookieRequest>();
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization':
+            'Bearer ${request.token}', // Add the authentication token if required
+        // Add any other required headers
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Fluttertoast.showToast(
+        msg: "Added to favorites successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      // Add logic here if you want to update the UI or perform other actions
+    } else {
+      Fluttertoast.showToast(
+        msg: "Failed to add to favorites",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  void removeFromFavorites() async {
+    final apiUrl = 'https://beetwelve.site/remove-favorite-api/${widget.id}/';
+
+    final request = context.read<CookieRequest>();
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      headers: {
+        'Authorization':
+            'Bearer ${request.token}', // Add the authentication token if required
+        // Add any other required headers
+      },
+    );
+
+    if (response.statusCode == 200) {
+      Fluttertoast.showToast(
+        msg: "Removed from favorites successfully",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+      // Add logic here if you want to update the UI or perform other actions
+    } else {
+      Fluttertoast.showToast(
+        msg: "Failed to remove from favorites",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 
   @override

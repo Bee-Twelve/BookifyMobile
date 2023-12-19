@@ -19,7 +19,7 @@ class MyApp extends StatelessWidget {
         providers: [
           Provider(create: (_) {
             CookieRequest request =
-                CookieRequest(baseUrl: "http://10.0.2.2:8000");
+                CookieRequest(baseUrl: "http://beetwelve.site");
             return request;
           }),
           ChangeNotifierProvider<BookDataProvider>(

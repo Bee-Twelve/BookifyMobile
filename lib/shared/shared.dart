@@ -23,6 +23,43 @@ class _TopBoxState extends State<TopBox> {
     searchController = TextEditingController();
   }
 
+  void _showFilterPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildFilterOption(context, 'Book Favorite'),
+              _buildFilterOption(context, 'Fiction'),
+              _buildFilterOption(context, 'Juvenile Fiction'),
+              _buildFilterOption(context, 'Biography & Autobiography'),
+              _buildFilterOption(context, 'History'),
+              _buildFilterOption(context, 'Literary Criticism'),
+              _buildFilterOption(context, 'Philosophy'),
+              _buildFilterOption(context, 'Religion'),
+              _buildFilterOption(context, 'Comics & Graphic Novels'),
+              _buildFilterOption(context, 'Drama'),
+              _buildFilterOption(context, 'Juvenile Nonfiction'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildFilterOption(BuildContext context, String filterName) {
+    return ListTile(
+      title: Text(filterName),
+      onTap: () {
+        // TODO: Handle filter selection
+        Navigator.pop(context); // Close the bottom sheet after selection
+        context.read<SearchQueryProvider>().setQuery(filterName);
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -87,14 +124,12 @@ class _TopBoxState extends State<TopBox> {
                       // * Search Controller
                       controller: searchController,
                       onSubmitted: (String value) {
-                        print("ini value: $value");
                         context.read<SearchQueryProvider>().setQuery(value);
                       },
                       // * Text Decoration
                       decoration: InputDecoration(
                         suffixIcon: InkWell(
                           onTap: () {
-                            print("ini klik tombol");
                             context
                                 .read<SearchQueryProvider>()
                                 .setQuery(searchController.text);
@@ -135,6 +170,7 @@ class _TopBoxState extends State<TopBox> {
                   InkWell(
                     onTap: () {
                       // TODO: SHOW FILTER
+                      _showFilterPopup(context);
                     },
                     child: Container(
                       // margin: EdgeInsets.only(left: 10),

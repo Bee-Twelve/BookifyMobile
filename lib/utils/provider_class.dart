@@ -8,13 +8,6 @@ class BookDataProvider extends ChangeNotifier {
   List<BookDataset> get listBook => _listBook;
   bool get loading => _loading;
 
-  // Future<void> updateList(Future<List<BookDataset>> list) async {
-  //   _listBook = await list;
-  //   _loading = false;
-  //   notifyListeners();
-  // }
-
-  // Modify this method to accept a List<BookDataset> instead of a Future
   void updateList(List<BookDataset> list) {
     _listBook = list;
     _loading = false;
@@ -34,8 +27,6 @@ class SearchQueryProvider extends ChangeNotifier {
 
   void setQuery(String q) {
     _query = q;
-    print("query: $_query");
-
     notifyListeners();
   }
 }

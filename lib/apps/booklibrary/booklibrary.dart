@@ -25,7 +25,6 @@ class _BookLibraryState extends State<BookLibrary> {
     searchQueryProvider.addListener(() {
       // Call fetchBook whenever the search query changes
       fetchBook(searchQueryProvider.query);
-      print('halooooooooo');
     });
   }
 
@@ -38,10 +37,8 @@ class _BookLibraryState extends State<BookLibrary> {
     var response = [];
     if (query == '') {
       response = await request.get('/api/books/');
-      print('ini query kosong $response');
     } else {
       response = await request.get('/api/books/search?q=$query');
-      print('ini query ga kosonggg $response');
     }
 
     List<BookDataset> listBook = [];

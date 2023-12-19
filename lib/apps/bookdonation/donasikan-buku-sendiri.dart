@@ -6,7 +6,7 @@ import 'package:google_fonts/google_fonts.dart';
 class DonasiBukuSendiri extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    double baseWidth = 425;
+    double baseWidth = 600;
     double fem = MediaQuery.of(context).size.width / baseWidth;
     double ffem = fem * 0.97;
 

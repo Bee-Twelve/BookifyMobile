@@ -1,9 +1,26 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:bookify/apps/BookMark/models/BookMarks.dart';
 import 'package:bookify/models/book_model.dart';
 import 'package:bookify/utils/book_service.dart';
+
+
+
+class GlobalData {
+  static final GlobalData _instance = GlobalData._internal();
+  factory GlobalData() => _instance;
+  GlobalData._internal();
+
+  List<int> displayIndices = [];
+
+  void addDisplayIndex(int index) {
+    if (!displayIndices.contains(index)) {
+      displayIndices.add(index);
+    }
+  }
+}
+
+
 
 class BookMark extends StatefulWidget {
   const BookMark({Key? key}) : super(key: key);
@@ -14,7 +31,6 @@ class BookMark extends StatefulWidget {
 
 class _BookMarkState extends State<BookMark> {
   late Future<List<Book>> booksFuture;
-  List<int> displayIndices = [12,1,2];
 
   @override
   void initState() {
@@ -22,6 +38,28 @@ class _BookMarkState extends State<BookMark> {
     fetchData();
     booksFuture = loadMockBooksData(); 
   }
+  
+Future<void> _deleteBook(int bookId) async {
+  var url = Uri.parse('http://localhost:8000/bookmark/delete/$bookId');
+
+  try {
+    var response = await http.delete(url);
+
+    if (response.statusCode == 200) {
+      // Buku berhasil dihapus dari server
+      print('Buku berhasil dihapus');
+      // Lakukan tindakan lain jika diperlukan setelah penghapusan
+    } else {
+      // Gagal menghapus buku
+      print('Gagal menghapus buku. Status code: ${response.statusCode}');
+    }
+  } catch (e) {
+    // Tangani kesalahan
+    print('Error: $e');
+  }
+}
+
+
 
 
   Future<void> fetchData() async {
@@ -36,18 +74,24 @@ class _BookMarkState extends State<BookMark> {
       for (var data in jsonData) {
         var fields = data['fields'];
         if (fields != null && fields.containsKey('book')) {
-          displayIndices.add(fields['book']);
+          int x = fields['book'];
+          GlobalData().addDisplayIndex(x-1);
         }
       }
-      print(displayIndices);
+
     } else {
       throw Exception('Failed to load data');
     }
+   
+    setState(() {}); // Memicu pembaruan UI
+    
   }
+  
+  
 
 
 
-  void showDetailedInfo(BuildContext context, Book book) {
+  void showDetailedInfo(BuildContext context, Book book, int index) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -326,12 +370,39 @@ class _BookMarkState extends State<BookMark> {
                     height: 10,
                   ),
 
-                  // * ========== THREE BUTTONS ==========
+                  // * ========== BUTTONS ==========
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: () {}, // TODO: BORROW BUTTON IMPLEMENTATION
+                      onTap: () async {
+                            int bookId = index; // Sesuaikan dengan atribut yang sesuai dengan ID buku
+                            var url = Uri.parse('http://localhost:8000/borrow-book/'); // Sesuaikan dengan URL endpoint Anda
+
+                            try {
+                              var response = await http.post(
+                                url,
+                                body: {'book_id': bookId.toString()}, // Sesuaikan dengan key yang diharapkan di endpoint Django
+                              );
+
+                              if (response.statusCode == 200) {
+                                var data = jsonDecode(response.body);
+                                String status = data['status'];
+                                String message = data['message'];
+
+                                // Lakukan sesuatu berdasarkan status dan pesan yang diterima
+                                if (status == 'success') {
+                                  print(message); // Tampilkan pesan berhasil
+                                } else {
+                                  print(message); // Tampilkan pesan bahwa buku sudah ada di rak pengguna
+                                }
+                              } else {
+                                print('Failed to borrow book. Status code: ${response.statusCode}');
+                              }
+                            } catch (e) {
+                              print('Error: $e');
+                            }
+                          },
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -354,7 +425,10 @@ class _BookMarkState extends State<BookMark> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {}, // TODO: DELETE BUTTON IMPLEMENTATION
+                        onTap: () {
+                          print(index);
+                          _deleteBook(index); 
+                        }, // TODO: DELETE BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -395,21 +469,25 @@ class _BookMarkState extends State<BookMark> {
       builder: (context, snapshot) {
         if (snapshot.hasData) {
           List<Book> books = snapshot.data!;
+          GlobalData().displayIndices;
+          print("Jumlah buku: ${books.length}");
+          List<int> displayIndices = GlobalData().displayIndices;
+
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2,
               childAspectRatio: 0.65,
             ),
             itemCount: displayIndices.length,
+            
             itemBuilder: (BuildContext context, int index) {
-              // Pastikan index dalam displayIndices ada dalam range daftar buku
-              if (index < books.length) {
                 int bookIndex = displayIndices[index];
+                print("mantap");
                 return Padding(
                   padding: const EdgeInsets.all(10),
                   child: InkWell(
                     onTap: () {
-                      showDetailedInfo(context, books[bookIndex]);
+                      showDetailedInfo(context, books[bookIndex], bookIndex);
                     },
                     child: Card(
                       clipBehavior: Clip.antiAlias,
@@ -421,6 +499,7 @@ class _BookMarkState extends State<BookMark> {
                         children: [
                           Expanded(
                             child: Image.network(
+                              
                               books[bookIndex].thumbnail,
                               fit: BoxFit.cover,
                             ),
@@ -431,9 +510,7 @@ class _BookMarkState extends State<BookMark> {
                     ),
                   ),
                 );
-              } else {
-                return Container(); // Jika index melebihi jumlah buku
-              }
+
             },
           );
         } else if (snapshot.hasError) {

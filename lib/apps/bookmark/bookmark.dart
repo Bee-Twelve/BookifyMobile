@@ -14,7 +14,7 @@ class BookMark extends StatefulWidget {
 
 class _BookMarkState extends State<BookMark> {
   late Future<List<Book>> booksFuture;
-  List<int> displayIndices = [];
+  List<int> displayIndices = [12,1,2];
 
   @override
   void initState() {
@@ -30,7 +30,8 @@ class _BookMarkState extends State<BookMark> {
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = jsonDecode(response.body);
-      
+      print(response.body);
+
       // Loop through the JSON data and extract the 'book' values
       for (var data in jsonData) {
         var fields = data['fields'];
@@ -387,17 +388,12 @@ class _BookMarkState extends State<BookMark> {
     );
   }
 
- @override
-Widget build(BuildContext context) {
-  if (displayIndices.isNotEmpty) {
+  @override
+  Widget build(BuildContext context) {
     return FutureBuilder(
       future: booksFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return CircularProgressIndicator(); // Tampilkan CircularProgressIndicator saat data masih diambil
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (snapshot.hasData) {
+        if (snapshot.hasData) {
           List<Book> books = snapshot.data!;
           return GridView.builder(
             gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
@@ -440,13 +436,11 @@ Widget build(BuildContext context) {
               }
             },
           );
-        } else {
-          return Text('No data available');
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
         }
+        return const CircularProgressIndicator();
       },
     );
-  } else {
-    return CircularProgressIndicator(); // Tampilkan CircularProgressIndicator selama data diambil
   }
-}
 }

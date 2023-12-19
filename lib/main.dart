@@ -30,6 +30,6 @@ class MyApp extends StatelessWidget {
             // ? gunakan "home: const Home()));" klo mau skip login/register
             // ? untuk keperluan debugging/working-in-progress
             // home: const LoginOrReg()));
-            home: const LoginOrReg()));
+            home: const Home()));
   }
 }

@@ -1,6 +1,6 @@
-import 'package:bookify/screens/landing_page.dart';
+import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/login.dart';
@@ -8,16 +8,15 @@ import '../screens/login.dart';
 class RightDrawer extends StatelessWidget {
   const RightDrawer({super.key});
 
-
   @override
   Widget build(BuildContext context) {
     final request = context.watch<CookieRequest>();
-    return  Drawer(
+    return Drawer(
       child: ListView(
         children: [
-          ListTile(
-            leading: const Icon(Icons.person),
-            title: const Text('Nama User'),
+          const ListTile(
+            leading: Icon(Icons.person),
+            title: Text('Nama User'),
             // Bagian redirection ke MyHomePage
           ),
           ListTile(
@@ -41,6 +40,10 @@ class RightDrawer extends StatelessWidget {
               TODO: Buatlah routing ke ShopFormPage di sini,
               setelah halaman ShopFormPage sudah dibuat.
               */
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => const ProductPage()),
+              );
             },
           ),
           ListTile(
@@ -76,17 +79,15 @@ class RightDrawer extends StatelessWidget {
               */
             },
           ),
-          ListTile(
-
-          ),
+          const ListTile(),
           ListTile(
             leading: const Icon(Icons.logout),
             title: const Text('Logout'),
             // Bagian redirection ke ShopFormPage
             onTap: () async {
               final response = await request.logout(
-                // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-                  "https://bookify.site/auth/logout/");
+                  // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
+                  "/auth/logout/");
               String message = response["message"];
               if (response['status']) {
                 String uname = response["username"];
@@ -99,7 +100,7 @@ class RightDrawer extends StatelessWidget {
                 );
               } else {
                 ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                  content: Text("$message"),
+                  content: Text(message),
                 ));
               }
             },

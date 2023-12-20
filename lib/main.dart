@@ -1,4 +1,5 @@
 import 'package:bookify/apps/bookdonation/bookdonation.dart';
+import 'package:bookify/screens/login.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
@@ -19,7 +20,7 @@ class MyApp extends StatelessWidget {
         providers: [
           Provider(create: (_) {
             CookieRequest request =
-                CookieRequest(baseUrl: "http://127.0.0.1:8000/");
+                CookieRequest(baseUrl: "https://beetwelve.site/");
             return request;
           }),
           ChangeNotifierProvider<BookDataProvider>(
@@ -35,7 +36,7 @@ class MyApp extends StatelessWidget {
             // * COMMENT SALAH SATUNYA UNTUK MEMILIH LAYAR (DEBUGGING)
             // ? gunakan "home: const Home()));" klo mau skip login/register
             // ? untuk keperluan debugging/working-in-progress
-            home: const Home()));
+            home: const LoginPage()));
     // home: const Home()));
   }
 }

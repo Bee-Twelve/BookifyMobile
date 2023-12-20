@@ -69,24 +69,25 @@ class ChangePoin extends StatelessWidget {
                       52.32 * fem,
                     ),
                     child: TextButton(
-                      onPressed: () {},
+                      onPressed: () {
+                        // Close the dialog when the "X" button is pressed
+                        Navigator.pop(context);
+                      },
                       style: TextButton.styleFrom(
                         padding: EdgeInsets.zero,
                       ),
                       child: Container(
                         width: 21.78 * fem,
                         height: 16.68 * fem,
-                        alignment: Alignment
-                            .center, // Center the text inside the container
+                        alignment: Alignment.center,
                         decoration: BoxDecoration(
-                          color: Colors.transparent, // Transparent background
+                          color: Colors.transparent,
                         ),
                         child: Text(
                           'X',
                           style: TextStyle(
                             color: Colors.white,
-                            fontSize:
-                                16.0 * fem, // Adjust the font size if needed
+                            fontSize: 16.0 * fem,
                           ),
                         ),
                       ),

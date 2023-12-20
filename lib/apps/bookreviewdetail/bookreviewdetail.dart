@@ -8,7 +8,7 @@ import 'package:flutter_rating_bar/flutter_rating_bar.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 
 class BookReviewDetail extends StatefulWidget {
@@ -34,8 +34,7 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
   double _rating = 0.0;
   final _reviewController = TextEditingController();
   Future<BookReview> fetchBookReview() async {
-    final apiUrl =
-        'https://beetwelve.site/bookreview/book/load-books-json/${widget.id}/';
+    final apiUrl = '/bookreview/book/load-books-json/${widget.id}/';
 
     final response = await http.get(Uri.parse(apiUrl));
 
@@ -182,8 +181,7 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
   }
 
   void saveReviewAndRating() async {
-    final apiUrl =
-        'https://beetwelve.site/bookreview/book/${widget.id}/add_review_api/';
+    final apiUrl = '/bookreview/book/${widget.id}/add_review_api/';
 
     final Map<String, dynamic> requestBody = {
       'rating': _rating,
@@ -234,20 +232,21 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
         body: Stack(
       children: [
         Container(
-            // * = TOP BOX GRADIENT =
-            width: double.infinity,
-            height: 230.0,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF535DAA), Color(0xFF1DBDA2)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(40.0),
-                bottomRight: Radius.circular(40.0),
-              ),
-            )),
+          // * = TOP BOX GRADIENT =
+          width: double.infinity,
+          height: 230.0,
+          decoration: const BoxDecoration(
+            gradient: LinearGradient(
+              colors: [Color(0xFF535DAA), Color(0xFF1DBDA2)],
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+            ),
+            borderRadius: BorderRadius.only(
+              bottomLeft: Radius.circular(40.0),
+              bottomRight: Radius.circular(40.0),
+            ),
+          ),
+        ),
         Padding(
           padding:
               const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
@@ -456,7 +455,7 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                                                           "pk"]; // Assuming the review ID field is 'id'
 
                                                       final apiUrl =
-                                                          'https://beetwelve.site/bookreview/book/api_delete_review/$reviewId/';
+                                                          '/bookreview/book/api_delete_review/$reviewId/';
 
                                                       final response =
                                                           await http.delete(

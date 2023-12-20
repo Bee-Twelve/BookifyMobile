@@ -64,7 +64,7 @@ class _BookReviewState extends State<BookReview> {
   }
 
   void showDetailedInfo(
-      BuildContext context, Map<String, dynamic> book, int ID) {
+      BuildContext context, Map<String, dynamic> book, int id) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -348,7 +348,7 @@ class _BookReviewState extends State<BookReview> {
                             context,
                             MaterialPageRoute(
                               builder: (context) => BookReviewDetail(
-                                  id: ID, book: book, username: username),
+                                  id: id, book: book, username: username),
                             ),
                           );
                         },
@@ -426,13 +426,13 @@ class _BookReviewState extends State<BookReview> {
                           if (favStatus == false) {
                             // Add to Fav
                             apiUrl =
-                                'https://beetwelve.site/add-favorite-api/${book["fields"]["pk"]}/';
+                                '/add-favorite-api/${book["fields"]["pk"]}/';
                             toastMessage =
                                 "${book["fields"]["title"]} added to your favorite list";
                           } else {
                             // Remove from Fav
                             apiUrl =
-                                'https://beetwelve.site/remove-favorite-api/${book["fields"]["pk"]}/';
+                                '/remove-favorite-api/${book["fields"]["pk"]}/';
                             toastMessage =
                                 "${book["fields"]["title"]} removed from your favorite list";
                           }

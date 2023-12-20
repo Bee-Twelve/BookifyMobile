@@ -16,8 +16,7 @@ class _BookFavoriteState extends State<BookFavorite> {
   late Future<List<Book>> booksFuture = Future.value([]);
 
   Future<void> fetchData() async {
-    final response = await http.post(
-        Uri.parse('https://beetwelve.site/bookreview/load-favorites-api/'));
+    final response = await http.post(Uri.parse('/load-favorites-api/'));
 
     if (response.statusCode == 200) {
       final Map<String, dynamic> jsonResponse = json.decode(response.body);

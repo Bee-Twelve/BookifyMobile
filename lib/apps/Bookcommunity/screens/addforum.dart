@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 
 import '../model/Books.dart';
@@ -30,7 +30,8 @@ class _AddForumPageState extends State<AddForumPage> {
   }
 
   Future<void> _fetchBooks() async {
-    final response = await http.get(Uri.parse('https://beetwelve.site/api/books/'));
+    final response =
+        await http.get(Uri.parse('https://beetwelve.site/api/books/'));
     if (response.statusCode == 200) {
       final List<dynamic> booksJson = json.decode(response.body);
       setState(() {
@@ -45,7 +46,8 @@ class _AddForumPageState extends State<AddForumPage> {
   }
 
   Future<bool> _addForum() async {
-    if (_formKey.currentState!.validate()) { // Check if the form is valid
+    if (_formKey.currentState!.validate()) {
+      // Check if the form is valid
       String url = 'https://beetwelve.site/bookcommunity/create_forum_flutter/';
       final cookieRequest = context.read<CookieRequest>();
 
@@ -86,7 +88,6 @@ class _AddForumPageState extends State<AddForumPage> {
       ),
     );
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -142,7 +143,7 @@ class _AddForumPageState extends State<AddForumPage> {
                 onPressed: () async {
                   bool added = await _addForum();
                   if (added) {
-                    Navigator.pop(context,true);
+                    Navigator.pop(context, true);
                   }
                 },
                 child: Text('Add Forum'),

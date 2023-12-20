@@ -33,7 +33,7 @@ class _RegisterPageState extends State<RegisterPage> {
   Future<void> _register() async {
     if (_formKey.currentState!.validate()) {
       var response = await http.post(
-        Uri.parse('http://beetwelve.site/authentication/register/'),
+        Uri.parse('/authentication/register/'),
         headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'username': username,

@@ -1,6 +1,6 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 
 import '../screens/login.dart';
@@ -87,7 +87,7 @@ class RightDrawer extends StatelessWidget {
             onTap: () async {
               final response = await request.logout(
                   // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-                  "https://beetwelve.site/auth/logout/");
+                  "/auth/logout/");
               String message = response["message"];
               if (response['status']) {
                 String uname = response["username"];

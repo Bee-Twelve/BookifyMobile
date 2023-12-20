@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart'; // Ensure you have the correct import for CookieRequest
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 
 import '../model/Forum.dart';
 import '../model/Discussion.dart';
@@ -26,7 +26,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   }
 
   Future<void> _deleteForum() async {
-    final cookieRequest = context.read<CookieRequest>();
+    final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
     String url = 'https://beetwelve.site/bookcommunity/delete_forum_flutter/';
     Map<String, String> headers = {
       "Content-Type": "application/json",
@@ -120,8 +120,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   }
 
   Future<void> _addDiscussion(BuildContext context, int forumId, String discussionText) async {
-    final cookieRequest = context.read<CookieRequest>();
-    String url = 'https://beetwelve.site/bookcommunity/create_discussion_flutter/';
+    final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
+    String url = '/bookcommunity/create_discussion_flutter/';
 
     var responseMap = await cookieRequest.post(
       url,

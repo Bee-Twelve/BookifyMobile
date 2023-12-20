@@ -1,12 +1,85 @@
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 // * ============================== TOP BOX ==============================
-class TopBox extends StatelessWidget {
+class TopBox extends StatefulWidget {
   final String username;
   final String module;
+  final Function(String)? onFilterSelected;
 
-  const TopBox({super.key, required this.username, required this.module});
+  const TopBox({
+    super.key,
+    required this.username,
+    required this.module,
+    this.onFilterSelected,
+  });
+
+  @override
+  State<TopBox> createState() => _TopBoxState();
+}
+
+class _TopBoxState extends State<TopBox> {
+  late TextEditingController searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    searchController = TextEditingController();
+  }
+
+  void _showFilterPopup(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      builder: (BuildContext context) {
+        return SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              _buildFilterOption(context, 'Book Favorite'),
+              _buildFilterOption(context, 'Bookshelf'),
+              _buildFilterOption(context, 'Booklibrary'),
+              _buildFilterOption(context, 'All Genre'),
+              _buildFilterOption(context, 'Fiction'),
+              _buildFilterOption(context, 'Juvenile Fiction'),
+              _buildFilterOption(context, 'Biography & Autobiography'),
+              _buildFilterOption(context, 'History'),
+              _buildFilterOption(context, 'Literary Criticism'),
+              _buildFilterOption(context, 'Philosophy'),
+              _buildFilterOption(context, 'Religion'),
+              _buildFilterOption(context, 'Comics & Graphic Novels'),
+              _buildFilterOption(context, 'Drama'),
+              _buildFilterOption(context, 'Juvenile Nonfiction'),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
+  void handleFilterSelection(String filterName) {
+    if (widget.onFilterSelected != null) {
+      widget.onFilterSelected!(filterName);
+    }
+  }
+
+  Widget _buildFilterOption(BuildContext context, String filterName) {
+    return ListTile(
+      title: Text(filterName),
+      onTap: () {
+        // TODO: Handle filter selection
+        if (filterName == 'Bookshelf' || filterName == 'Booklibrary') {
+          handleFilterSelection(filterName);
+        }
+        if (filterName == 'All Genre') {
+          filterName = '';
+        }
+        context.read<SearchQueryProvider>().setQuery(filterName);
+        Navigator.pop(context);
+      },
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +120,7 @@ class TopBox extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  "Hello $username!\n$module",
+                  "Hello ${widget.username}!\n${widget.module}",
                   style: const TextStyle(
                       fontSize: 20,
                       fontFamily: 'Inter',
@@ -69,7 +142,25 @@ class TopBox extends StatelessWidget {
                     height: 42,
                     width: 167,
                     child: TextField(
+                      // * Search Controller
+                      controller: searchController,
+                      onSubmitted: (String value) {
+                        context.read<SearchQueryProvider>().setQuery(value);
+                      },
+                      // * Text Decoration
                       decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            context
+                                .read<SearchQueryProvider>()
+                                .setQuery(searchController.text);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset(
+                                'assets/icons/search_icon.svg'),
+                          ),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: const BorderSide(color: Colors.white),
@@ -91,11 +182,6 @@ class TopBox extends StatelessWidget {
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:
-                              SvgPicture.asset('assets/icons/search_icon.svg'),
-                        ),
                       ),
                     ),
                   ),
@@ -104,7 +190,7 @@ class TopBox extends StatelessWidget {
                   // * FILTER
                   InkWell(
                     onTap: () {
-                      // TODO: SHOW FILTER
+                      _showFilterPopup(context);
                     },
                     child: Container(
                       // margin: EdgeInsets.only(left: 10),

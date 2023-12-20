@@ -26,6 +26,8 @@ class MyApp extends StatelessWidget {
               create: (_) => BookDataProvider()),
           ChangeNotifierProvider<SearchQueryProvider>(
               create: (_) => SearchQueryProvider()),
+          ChangeNotifierProvider<BookshelfProvider>(
+              create: (_) => BookshelfProvider()),
         ],
         child: MaterialApp(
             title: 'Flutter App',

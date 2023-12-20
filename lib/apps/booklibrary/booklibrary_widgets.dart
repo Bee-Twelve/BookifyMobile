@@ -1,59 +1,19 @@
-import 'package:bookify/main.dart';
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
-import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/models.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
-import 'package:bookify/utils/provider_class.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-class BookLibrary extends StatefulWidget {
-  const BookLibrary({super.key});
+class BookCatalog extends StatefulWidget {
+  final IBookProvider provider;
+  const BookCatalog({super.key, required this.provider});
 
   @override
-  State<BookLibrary> createState() => _BookLibraryState();
+  State<BookCatalog> createState() => _BookCatalogState();
 }
 
-class _BookLibraryState extends State<BookLibrary> {
-  @override
-  void initState() {
-    super.initState();
-
-    fetchBook('');
-    // Listen to the SearchQueryProvider
-    final searchQueryProvider =
-        Provider.of<SearchQueryProvider>(context, listen: false);
-    searchQueryProvider.addListener(() {
-      // Call fetchBook whenever the search query changes
-      fetchBook(searchQueryProvider.query);
-    });
-  }
-
-  // * ========== METHODS ==========
-  Future<void> fetchBook(String query) async {
-    final request = Provider.of<CookieRequest>(context, listen: false);
-    final bookDataProvider =
-        Provider.of<BookDataProvider>(context, listen: false);
-
-    var response = [];
-    if (query == '') {
-      response = await request.get('/api/books/fetch-book/');
-    } else {
-      response = await request.get('/api/books/search?q=$query');
-    }
-
-    List<BookDataset> listBook = [];
-    for (var book in response) {
-      if (book != null) {
-        listBook.add(BookDataset.fromJson(book));
-      }
-    }
-
-    bookDataProvider.updateList(listBook);
-    bookDataProvider.setLoading(false);
-  }
-
+class _BookCatalogState extends State<BookCatalog> {
   Future<void> borrowBook(int bookId) async {
     final request = Provider.of<CookieRequest>(context, listen: false);
     const apiUrl = '/booklibrary/add-to-bookshelf/';
@@ -86,14 +46,7 @@ class _BookLibraryState extends State<BookLibrary> {
     }
   }
 
-  Future<void> launchAmazonWithISBN(String isbn13) async {
-    final Uri url = Uri.parse('https://www.amazon.com/s?k=$isbn13');
-    if (!await launchUrl(url)) {
-      throw Exception('Could not launch $url');
-    }
-  }
-
-  void showDetailedInfo(BuildContext context, BookDataset book) {
+  void showDetailedInfo(BuildContext context, dynamic book) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -404,9 +357,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {
-                          launchAmazonWithISBN(book.fields.isbn13);
-                        }, // TODO: BUY ON AMAZON IMPLEMENTATION
+                        onTap: () {}, // TODO: BUY ON AMAZON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -476,59 +427,49 @@ class _BookLibraryState extends State<BookLibrary> {
     );
   }
 
-  // * ========== BUILD ==========
-
   @override
   Widget build(BuildContext context) {
-    return bookCatalog();
-  }
-
-  Consumer<BookDataProvider> bookCatalog() {
-    return Consumer<BookDataProvider>(
-      builder: (context, provider, child) {
-        if (provider.loading) {
-          return const Center(child: CircularProgressIndicator());
-        } else {
-          if (provider.listBook.isEmpty) {
-            return const Center(child: Text("Buku tidak ditemukan"));
-          } else {
-            return GridView.builder(
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
-                childAspectRatio: 0.65,
-              ),
-              itemCount: provider.listBook.length,
-              itemBuilder: (BuildContext context, int index) {
-                return Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InkWell(
-                    onTap: () {
-                      showDetailedInfo(context, provider.listBook[index]);
-                    },
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Image.network(
-                              provider.listBook[index].fields.thumbnail,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+    if (widget.provider.loading) {
+      return const Center(child: CircularProgressIndicator());
+    } else {
+      if (widget.provider.listBook.isEmpty) {
+        return const Center(child: Text("Buku tidak ditemukan"));
+      } else {
+        return GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.65,
+          ),
+          itemCount: widget.provider.listBook.length,
+          itemBuilder: (BuildContext context, int index) {
+            return Padding(
+              padding: const EdgeInsets.all(10),
+              child: InkWell(
+                onTap: () {
+                  showDetailedInfo(context, widget.provider.listBook[index]);
+                },
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
                   ),
-                );
-              },
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          widget.provider.listBook[index].fields.thumbnail,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
             );
-          }
-        }
-      },
-    );
+          },
+        );
+      }
+    }
   }
 }

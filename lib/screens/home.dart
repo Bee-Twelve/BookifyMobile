@@ -1,4 +1,5 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
+import 'package:bookify/apps/booklibrary/bookshelf.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/shared/shared.dart';
 import 'package:bookify/apps/booklibrary/booklibrary.dart';
@@ -21,6 +22,7 @@ class _BookLibraryState extends State<Home> {
     const BookLibrary(),
     const ProductPage(),
     const Text('BookMark Tab Content'),
+    const BookshelfPage(),
     // other tabs content
   ];
   // * =============
@@ -31,6 +33,18 @@ class _BookLibraryState extends State<Home> {
       _selectedIndex = index;
     });
   }
+
+  void _onFilterSelected(String filterName) {
+    if (filterName == 'Booklibrary') {
+      setState(() {
+        _selectedIndex = 2;
+      });
+    } else if (filterName == 'Bookshelf') {
+      setState(() {
+        _selectedIndex = 5;
+      });
+    }
+  }
   // * =============
 
   // * === MAIN WIDGETS ===
@@ -39,9 +53,10 @@ class _BookLibraryState extends State<Home> {
     return Scaffold(
       body: Column(
         children: [
-          const TopBox(
+          TopBox(
             username: 'Fulan',
             module: 'BookLibrary',
+            onFilterSelected: _onFilterSelected,
           ),
           Expanded(
             child: _widgetOptions.elementAt(_selectedIndex),

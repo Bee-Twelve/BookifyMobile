@@ -1,4 +1,5 @@
 import 'package:bookify/models/models.dart';
+import 'package:bookify/models/bookshelf_model.dart';
 import 'package:flutter/material.dart';
 
 class BookDataProvider extends ChangeNotifier {
@@ -10,6 +11,25 @@ class BookDataProvider extends ChangeNotifier {
 
   void updateList(List<BookDataset> list) {
     _listBook = list;
+    _loading = false;
+    notifyListeners();
+  }
+
+  void setLoading(bool b) {
+    _loading = b;
+    notifyListeners();
+  }
+}
+
+class BookshelfProvider extends ChangeNotifier {
+  List<Bookshelf> _bookshelfList = [];
+  bool _loading = false;
+
+  List<Bookshelf> get listBook => _bookshelfList;
+  bool get loading => _loading;
+
+  void updateBookshelfList(List<Bookshelf> list) {
+    _bookshelfList = list;
     _loading = false;
     notifyListeners();
   }

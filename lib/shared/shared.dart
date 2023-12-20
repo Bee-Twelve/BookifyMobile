@@ -7,8 +7,14 @@ import 'package:provider/provider.dart';
 class TopBox extends StatefulWidget {
   final String username;
   final String module;
+  final Function(String)? onFilterSelected;
 
-  const TopBox({super.key, required this.username, required this.module});
+  const TopBox({
+    super.key,
+    required this.username,
+    required this.module,
+    this.onFilterSelected,
+  });
 
   @override
   State<TopBox> createState() => _TopBoxState();
@@ -32,6 +38,8 @@ class _TopBoxState extends State<TopBox> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _buildFilterOption(context, 'Book Favorite'),
+              _buildFilterOption(context, 'Bookshelf'),
+              _buildFilterOption(context, 'Booklibrary'),
               _buildFilterOption(context, 'All Genre'),
               _buildFilterOption(context, 'Fiction'),
               _buildFilterOption(context, 'Juvenile Fiction'),
@@ -50,16 +58,25 @@ class _TopBoxState extends State<TopBox> {
     );
   }
 
+  void handleFilterSelection(String filterName) {
+    if (widget.onFilterSelected != null) {
+      widget.onFilterSelected!(filterName);
+    }
+  }
+
   Widget _buildFilterOption(BuildContext context, String filterName) {
     return ListTile(
       title: Text(filterName),
       onTap: () {
         // TODO: Handle filter selection
-        Navigator.pop(context); // Close the bottom sheet after selection
+        if (filterName == 'Bookshelf' || filterName == 'Booklibrary') {
+          handleFilterSelection(filterName);
+        }
         if (filterName == 'All Genre') {
           filterName = '';
         }
         context.read<SearchQueryProvider>().setQuery(filterName);
+        Navigator.pop(context);
       },
     );
   }
@@ -173,7 +190,6 @@ class _TopBoxState extends State<TopBox> {
                   // * FILTER
                   InkWell(
                     onTap: () {
-                      // TODO: SHOW FILTER
                       _showFilterPopup(context);
                     },
                     child: Container(

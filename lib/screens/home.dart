@@ -1,9 +1,12 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
+import 'package:bookify/apps/bookfavorite/bookfavorite.dart';
 import 'package:bookify/apps/booklibrary/bookshelf.dart';
 import 'package:bookify/apps/bookmark/bookmark.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/shared/shared.dart';
 import 'package:bookify/apps/booklibrary/booklibrary.dart';
+import 'package:bookify/apps/bookreview/bookreview.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -14,38 +17,89 @@ class Home extends StatefulWidget {
 
 class _BookLibraryState extends State<Home> {
   int _selectedIndex = 2;
+  String _selectedModule = "Book Library";
+  String _username = "";
+
+  @override
+  void initState() {
+    super.initState();
+    // fetchData();
+    loadUsername();
+
+    // booksFuture = loadMockBooksData();
+  }
 
   // * = VARIABLES =
   // TODO: ATUR PERGANTIAN PAGES, ARAHKAN KE WIDGET KALIAN MASING2
   final List<Widget> _widgetOptions = [
-    const Text('BookReview Tab Content'),
+    const BookReview(),
     const Text('BookDonation Tab Content'),
     const BookLibrary(),
     const ProductPage(),
     const Text('BookMark Tab Content'),
     const BookshelfPage(),
+    const BookFavorite(),
     // other tabs content
   ];
   // * =============
 
   // * == METHODS ==
   void _onItemTapped(int index) {
-    setState(() {
-      _selectedIndex = index;
-    });
+    if (index == 0) {
+      setState(() {
+        _selectedModule = "Book Review & Favorite";
+        _selectedIndex = index;
+      });
+    } else if (index == 1) {
+      setState(() {
+        _selectedModule = "Book Donation";
+        _selectedIndex = index;
+      });
+    } else if (index == 2) {
+      setState(() {
+        _selectedModule = "Book Library";
+        _selectedIndex = index;
+      });
+    } else if (index == 3) {
+      setState(() {
+        _selectedModule = "Book Community";
+        _selectedIndex = index;
+      });
+    } else {
+      setState(() {
+        _selectedModule = "Book Mark";
+        _selectedIndex = index;
+      });
+    }
   }
 
   void _onFilterSelected(String filterName) {
     if (filterName == 'Booklibrary') {
       setState(() {
         _selectedIndex = 2;
+        _selectedModule = "Book Library";
       });
     } else if (filterName == 'Bookshelf') {
       setState(() {
         _selectedIndex = 5;
+        _selectedModule = "Book Library";
+      });
+    } else if (filterName == 'Book Favorite') {
+      setState(() {
+        _selectedIndex = 6;
+        _selectedModule = "Book Review & Favorite";
       });
     }
   }
+
+  Future<void> loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uname = prefs.getString('username') ?? '';
+    setState(() {
+      _username = uname;
+    });
+  }
+
   // * =============
 
   // * === MAIN WIDGETS ===
@@ -55,8 +109,8 @@ class _BookLibraryState extends State<Home> {
       body: Column(
         children: [
           TopBox(
-            username: 'Fulan',
-            module: 'BookLibrary',
+            username: _username,
+            module: _selectedModule,
             onFilterSelected: _onFilterSelected,
           ),
           Expanded(

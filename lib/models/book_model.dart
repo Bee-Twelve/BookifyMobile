@@ -44,4 +44,20 @@ class Book {
       // ... initialize other fields ...
     );
   }
+
+  @override
+  String toString() {
+    return 'Book{'
+        'title: $title, '
+        'author: $author, '
+        'genre: $genre, '
+        'pages: $pages, '
+        'publishedYear: $publishedYear, '
+        'description: $description, '
+        'thumbnail: $thumbnail, '
+        'ratingsAvg: $ratingsAvg, '
+        'ratingsCount: $ratingsCount, '
+        'isbn10: $isbn10, '
+        'isbn13: $isbn13}';
+  }
 }

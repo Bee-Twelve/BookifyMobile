@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 
 import '../model/Forum.dart';
@@ -78,8 +79,10 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
 
 
   Future<void> _fetchDiscussions() async {
-    var discussionUrl = Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
-    var response = await http.get(discussionUrl, headers: {"Content-Type": "application/json"});
+    var discussionUrl =
+        Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
+    var response = await http
+        .get(discussionUrl, headers: {"Content-Type": "application/json"});
     setState(() {
       _discussions = discussionFromJson(utf8.decode(response.bodyBytes))
           .where((d) => d.fields.forum == widget.forum.pk)
@@ -109,7 +112,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
             TextButton(
               child: Text('Add'),
               onPressed: () {
-                _addDiscussion(context, widget.forum.pk, _discussionController.text);
+                _addDiscussion(
+                    context, widget.forum.pk, _discussionController.text);
                 Navigator.of(context).pop();
               },
             ),
@@ -118,6 +122,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
       },
     );
   }
+
 
   Future<void> _addDiscussion(BuildContext context, int forumId, String discussionText) async {
     final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
@@ -137,6 +142,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
       _showAlert(context, 'Error: ${responseMap['message']}');
     }
   }
+
   void _showAlert(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -145,9 +151,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
         content: Text(message),
         actions: [
           TextButton(
-              child: Text('OK'),
-              onPressed: () => Navigator.pop(context)
-          ),
+              child: Text('OK'), onPressed: () => Navigator.pop(context)),
         ],
       ),
     );
@@ -191,16 +195,24 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${widget.forum.fields.subject}", style: const TextStyle(fontSize: 25, color: Colors.lightBlueAccent, fontWeight: FontWeight.bold)),
+                  Text("${widget.forum.fields.subject}",
+                      style: const TextStyle(
+                          fontSize: 25,
+                          color: Colors.lightBlueAccent,
+                          fontWeight: FontWeight.bold)),
                   SizedBox(height: 3),
-                  Text("${widget.forum.fields.description}", style: TextStyle(fontSize: 18)),
+                  Text("${widget.forum.fields.description}",
+                      style: TextStyle(fontSize: 18)),
                   SizedBox(height: 10),
-                  Text("by: ${widget.forum.fields.user} on ${widget.forum.fields.dateCreated}", style: TextStyle(fontSize: 12)),
+                  Text(
+                      "by: ${widget.forum.fields.user} on ${widget.forum.fields.dateCreated}",
+                      style: TextStyle(fontSize: 12)),
                 ],
               ),
             ),
             // Discussions title
-            Text("Discussions:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+            Text("Discussions:",
+                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             // Discussion list
             Expanded(
               child: ListView.builder(
@@ -209,7 +221,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                   Discussion discussion = _discussions[index];
                   return Card(
                     child: ListTile(
-                      title: Text("${discussion.fields.user} : ${discussion.fields.discuss}"),
+                      title: Text(
+                          "${discussion.fields.user} : ${discussion.fields.discuss}"),
                     ),
                   );
                 },
@@ -226,6 +239,4 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
       ),
     );
   }
-
-
 }

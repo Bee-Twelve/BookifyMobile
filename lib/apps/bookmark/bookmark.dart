@@ -39,8 +39,8 @@ class _BookMarkState extends State<BookMark> {
     booksFuture = loadMockBooksData(); 
   }
   
-Future<void> _deleteBook(int bookId) async {
-  var url = Uri.parse('http://localhost:8000/bookmark/delete/$bookId');
+Future<void> _deleteBook(int pk) async {
+  var url = Uri.parse('http://localhost:8000/bookmark/delete/$pk/');
 
   try {
     var response = await http.delete(url);
@@ -73,9 +73,11 @@ Future<void> _deleteBook(int bookId) async {
       // Loop through the JSON data and extract the 'book' values
       for (var data in jsonData) {
         var fields = data['fields'];
-        if (fields != null && fields.containsKey('book')) {
+        var pk = data['pk'];
+        if (fields != null && pk!= null) {
           int x = fields['book'];
           GlobalData().addDisplayIndex(x-1);
+          GlobalData().addDisplayIndex(pk);
         }
       }
 
@@ -91,7 +93,7 @@ Future<void> _deleteBook(int bookId) async {
 
 
 
-  void showDetailedInfo(BuildContext context, Book book, int index) {
+  void showDetailedInfo(BuildContext context, Book book, int pk) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -376,7 +378,7 @@ Future<void> _deleteBook(int bookId) async {
                     children: [
                       InkWell(
                       onTap: () async {
-                            int bookId = index; // Sesuaikan dengan atribut yang sesuai dengan ID buku
+                            int bookId = pk; // Sesuaikan dengan atribut yang sesuai dengan ID buku
                             var url = Uri.parse('http://localhost:8000/borrow-book/'); // Sesuaikan dengan URL endpoint Anda
 
                             try {
@@ -426,8 +428,8 @@ Future<void> _deleteBook(int bookId) async {
                       ),
                       InkWell(
                         onTap: () {
-                          print(index);
-                          _deleteBook(index); 
+                          print(pk);
+                          _deleteBook(pk); 
                         }, // TODO: DELETE BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
@@ -462,62 +464,76 @@ Future<void> _deleteBook(int bookId) async {
     );
   }
 
-  @override
-  Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: booksFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Book> books = snapshot.data!;
-          GlobalData().displayIndices;
-          print("Jumlah buku: ${books.length}");
-          List<int> displayIndices = GlobalData().displayIndices;
+@override
+Widget build(BuildContext context) {
+  return FutureBuilder(
+    future: booksFuture,
+    builder: (context, snapshot) {
+      if (snapshot.hasData) {
+        List<Book> books = snapshot.data!;
+        GlobalData().displayIndices;
+        print("Jumlah buku: ${books.length}");
+        List<int> displayIndices = GlobalData().displayIndices;
 
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.65,
-            ),
-            itemCount: displayIndices.length,
-            
-            itemBuilder: (BuildContext context, int index) {
-                int bookIndex = displayIndices[index];
-                print("mantap");
-                return Padding(
-                  padding: const EdgeInsets.all(10),
-                  child: InkWell(
-                    onTap: () {
-                      showDetailedInfo(context, books[bookIndex], bookIndex);
-                    },
-                    child: Card(
-                      clipBehavior: Clip.antiAlias,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Expanded(
-                            child: Image.network(
-                              
-                              books[bookIndex].thumbnail,
-                              fit: BoxFit.cover,
-                            ),
-                          ),
-                          // ... tambahkan elemen lain jika perlu ...
-                        ],
-                      ),
-                    ),
-                  ),
-                );
-
-            },
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+        // Membuat list baru untuk menampung indeks ganjil saja
+        List<int> oddIndices = [];
+        List<int> pkvalue = [];
+        for (int i = 0; i < displayIndices.length; i++) {
+          if (i.isOdd) {
+            pkvalue.add(displayIndices[i]);
+          }
+          else{
+            oddIndices.add(displayIndices[i]);
+          }
         }
-        return const CircularProgressIndicator();
-      },
-    );
-  }
+        print(displayIndices);
+        print(oddIndices);
+        print(pkvalue);
+
+        return GridView.builder(
+          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+            crossAxisCount: 2,
+            childAspectRatio: 0.65,
+          ),
+          itemCount: oddIndices.length,
+          itemBuilder: (BuildContext context, int index) {
+            int bookIndex = oddIndices[index];
+            int pk= pkvalue[index];
+            print("mantap");
+            return Padding(
+              padding: const EdgeInsets.all(10),
+              child: InkWell(
+                onTap: () {
+                  showDetailedInfo(context, books[bookIndex], pk);
+                },
+                child: Card(
+                  clipBehavior: Clip.antiAlias,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      Expanded(
+                        child: Image.network(
+                          books[bookIndex].thumbnail,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      // ... tambahkan elemen lain jika perlu ...
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      } else if (snapshot.hasError) {
+        return Text('Error: ${snapshot.error}');
+      }
+      return const CircularProgressIndicator();
+    },
+  );
+}
+
 }

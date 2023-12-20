@@ -132,7 +132,7 @@ class _TopBoxState extends State<TopBox> {
                 InkWell(
                   onTap: () {
                     // Navigate ke Profile Detail
-                    Navigator.pushReplacement(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(builder: (context) => const Profile()),
                     );

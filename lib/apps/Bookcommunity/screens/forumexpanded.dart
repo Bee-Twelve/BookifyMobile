@@ -25,6 +25,58 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     _fetchDiscussions();
   }
 
+  Future<void> _deleteForum() async {
+    final cookieRequest = context.read<CookieRequest>();
+    String url = 'https://beetwelve.site/bookcommunity/delete_forum_flutter/';
+    Map<String, String> headers = {
+      "Content-Type": "application/json",
+      // Include any other headers required for authentication
+    };
+
+    // Convert cookies map to cookie header string
+    var cookies = cookieRequest.cookies;
+    if (cookies != null && cookies.isNotEmpty) {
+      headers['Cookie'] = cookies.entries.map((e) => '${e.key}=${e.value.value}').join('; ');
+    }
+
+    var response = await http.delete(
+      Uri.parse(url),
+      headers: headers,
+      body: json.encode({"forum_id": widget.forum.pk}),
+    );
+
+    if (response.statusCode == 200) {
+      var responseMap = json.decode(response.body);
+      if (responseMap['status'] == 'success') {
+        _showSuccessAlertAndNavigateBack(context, "Forum successfully deleted");
+      } else {
+        _showAlert(context, 'Error: ${responseMap['message']}');
+      }
+    } else {
+      var responseMap = json.decode(response.body);
+      _showAlert(context, 'Error: ${responseMap['message']}');
+    }
+  }
+  void _showSuccessAlertAndNavigateBack(BuildContext context, String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Alert'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Dismiss the AlertDialog
+              Navigator.of(context).pop(true); // Go back and signal the deletion
+            },
+          ),
+        ],
+      ),
+    );
+  }
+
+
   Future<void> _fetchDiscussions() async {
     var discussionUrl =
         Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
@@ -110,6 +162,13 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.forum.fields.book),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.delete),
+            onPressed: _deleteForum,
+            tooltip: 'Delete Forum',
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),

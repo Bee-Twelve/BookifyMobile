@@ -1,13 +1,17 @@
 import 'package:bookify/apps/bookfavorite/bookfavorite.dart';
 import 'package:bookify/utils/provider_class.dart';
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
+
 // * ============================== TOP BOX ==============================
+class TopBox extends StatefulWidget {
 class TopBox extends StatefulWidget {
   final String username;
   final String module;
+  final Function(String)? onFilterSelected;
 
   const TopBox({super.key, required this.username, required this.module});
 
@@ -111,6 +115,7 @@ class _TopBoxState extends State<TopBox> {
                 ),
                 const SizedBox(width: 10),
                 Text(
+                  "Hello ${widget.username}!\n${widget.module}",
                   "Hello ${widget.username}!\n${widget.module}",
                   style: const TextStyle(
                       fontSize: 20,

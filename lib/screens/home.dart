@@ -1,3 +1,5 @@
+import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
+import 'package:bookify/apps/booklibrary/bookshelf.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/shared/shared.dart';
 import 'package:bookify/apps/booklibrary/booklibrary.dart';
@@ -22,8 +24,9 @@ class _BookLibraryState extends State<Home> {
     const BookReview(),
     const Text('BookDonation Tab Content'),
     const BookLibrary(),
-    const Text('BookCommunity Tab Content'),
+    const ProductPage(),
     const Text('BookMark Tab Content'),
+    const BookshelfPage(),
     // other tabs content
   ];
   // * =============
@@ -58,6 +61,18 @@ class _BookLibraryState extends State<Home> {
     }
   }
 
+  void _onFilterSelected(String filterName) {
+    if (filterName == 'Booklibrary') {
+      setState(() {
+        _selectedIndex = 2;
+      });
+    } else if (filterName == 'Bookshelf') {
+      setState(() {
+        _selectedIndex = 5;
+      });
+    }
+  }
+
   // * =============
   Future<void> loadUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -86,6 +101,7 @@ class _BookLibraryState extends State<Home> {
           TopBox(
             username: _username,
             module: _selectedModule,
+            onFilterSelected: _onFilterSelected,
           ),
           Expanded(
             child: _widgetOptions.elementAt(_selectedIndex),

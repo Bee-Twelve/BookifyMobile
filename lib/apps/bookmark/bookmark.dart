@@ -3,9 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookify/models/book_model.dart';
 import 'package:bookify/utils/book_service.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
-
 
 class GlobalData {
   static final GlobalData _instance = GlobalData._internal();
@@ -21,8 +20,6 @@ class GlobalData {
   }
 }
 
-
-
 class BookMark extends StatefulWidget {
   const BookMark({Key? key}) : super(key: key);
 
@@ -32,59 +29,50 @@ class BookMark extends StatefulWidget {
 
 class _BookMarkState extends State<BookMark> {
   late Future<List<Book>> booksFuture;
-  
 
   @override
   void initState() {
     super.initState();
     fetchData();
-    booksFuture = loadMockBooksData(); 
+    booksFuture = loadMockBooksData();
   }
-  
-Future<void> _deleteBook(int pk) async {
-  var url = Uri.parse('https://beetwelve.site/bookmark/delete/$pk/');
 
-  try {
-    var response = await http.delete(url);
+  Future<void> _deleteBook(int pk) async {
+    var url = Uri.parse('/bookmark/delete/$pk/');
 
-    if (response.statusCode == 200) {
-      // Buku berhasil dihapus dari server
-      print('Buku berhasil dihapus');
-      // Lakukan tindakan lain jika diperlukan setelah penghapusan
-      setState(() {
-        // Hapus buku dari daftar tampilan Anda di sini
-        // Misalnya, Anda dapat menggunakan filter atau menghapus pk dari displayIndices
-        GlobalData().displayIndices.remove(pk);
-      });
-    } else {
-      // Gagal menghapus buku
-      print('Gagal menghapus buku. Status code: ${response.statusCode}');
+    try {
+      var response = await http.delete(url);
+
+      if (response.statusCode == 200) {
+        // Buku berhasil dihapus dari server
+        print('Buku berhasil dihapus');
+        // Lakukan tindakan lain jika diperlukan setelah penghapusan
+        setState(() {
+          // Hapus buku dari daftar tampilan Anda di sini
+          // Misalnya, Anda dapat menggunakan filter atau menghapus pk dari displayIndices
+          GlobalData().displayIndices.remove(pk);
+        });
+      } else {
+        // Gagal menghapus buku
+        print('Gagal menghapus buku. Status code: ${response.statusCode}');
+      }
+    } catch (e) {
+      // Tangani kesalahan
+      print('Error: $e');
     }
-  } catch (e) {
-    // Tangani kesalahan
-    print('Error: $e');
   }
-}
 
-Future<void> Borrow(int idBuku) async {
+  Future<void> Borrow(int idBuku) async {
+    final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
+    String url = "https://beetwelve.site/booklibrary/borrow-book-flutter/";
 
-  final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
-  String url = "https://beetwelve.site/booklibrary/borrow-book-flutter/";
-  
-var responseMap = await cookieRequest.post(
+    var responseMap = await cookieRequest.post(
       url,
       json.encode({
         "book_id": idBuku,
-      
       }),
     );
-}
-
-
-
-
-
-
+  }
 
   Future<void> fetchData() async {
     var url = Uri.parse('https://beetwelve.site/bookmark/json/');
@@ -100,24 +88,18 @@ var responseMap = await cookieRequest.post(
       for (var data in jsonData) {
         var fields = data['fields'];
         var pk = data['pk'];
-        if (fields != null && pk!= null) {
+        if (fields != null && pk != null) {
           int x = fields['book'];
-          GlobalData().addDisplayIndex(x-1);
+          GlobalData().addDisplayIndex(x - 1);
           GlobalData().addDisplayIndex(pk);
         }
       }
-
     } else {
       throw Exception('Failed to load data');
     }
-   
+
     setState(() {}); // Memicu pembaruan UI
-    
   }
-  
-  
-
-
 
   void showDetailedInfo(BuildContext context, Book book, int pk, int index) {
     showGeneralDialog(
@@ -403,10 +385,10 @@ var responseMap = await cookieRequest.post(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                      onTap: () async {
-                            print(index);
-                            Borrow(index);
-                          },
+                        onTap: () async {
+                          print(index);
+                          Borrow(index);
+                        },
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -431,7 +413,7 @@ var responseMap = await cookieRequest.post(
                       InkWell(
                         onTap: () {
                           print(pk);
-                          _deleteBook(pk); 
+                          _deleteBook(pk);
                         }, // TODO: DELETE BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
@@ -453,7 +435,7 @@ var responseMap = await cookieRequest.post(
                             ),
                           ),
                         ),
-                      ),                      
+                      ),
                     ],
                   )
                   // * ========== THREE BUTTONS ==========
@@ -466,76 +448,74 @@ var responseMap = await cookieRequest.post(
     );
   }
 
-@override
-Widget build(BuildContext context) {
-  return FutureBuilder(
-    future: booksFuture,
-    builder: (context, snapshot) {
-      if (snapshot.hasData) {
-        List<Book> books = snapshot.data!;
-        GlobalData().displayIndices;
-        print("Jumlah buku: ${books.length}");
-        List<int> displayIndices = GlobalData().displayIndices;
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder(
+      future: booksFuture,
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          List<Book> books = snapshot.data!;
+          GlobalData().displayIndices;
+          print("Jumlah buku: ${books.length}");
+          List<int> displayIndices = GlobalData().displayIndices;
 
-        // Membuat list baru untuk menampung indeks ganjil saja
-        List<int> oddIndices = [];
-        List<int> pkvalue = [];
-        for (int i = 0; i < displayIndices.length; i++) {
-          if (i.isOdd) {
-            pkvalue.add(displayIndices[i]);
+          // Membuat list baru untuk menampung indeks ganjil saja
+          List<int> oddIndices = [];
+          List<int> pkvalue = [];
+          for (int i = 0; i < displayIndices.length; i++) {
+            if (i.isOdd) {
+              pkvalue.add(displayIndices[i]);
+            } else {
+              oddIndices.add(displayIndices[i]);
+            }
           }
-          else{
-            oddIndices.add(displayIndices[i]);
-          }
-        }
-        print(displayIndices);
-        print(oddIndices);
-        print(pkvalue);
+          print(displayIndices);
+          print(oddIndices);
+          print(pkvalue);
 
-        return GridView.builder(
-          gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-            crossAxisCount: 2,
-            childAspectRatio: 0.65,
-          ),
-          itemCount: oddIndices.length,
-          itemBuilder: (BuildContext context, int index) {
-            int bookIndex = oddIndices[index];
-            int pk= pkvalue[index];
-            print("mantap");
-            return Padding(
-              padding: const EdgeInsets.all(10),
-              child: InkWell(
-                onTap: () {
-                  showDetailedInfo(context, books[bookIndex], pk, index);
-                },
-                child: Card(
-                  clipBehavior: Clip.antiAlias,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Expanded(
-                        child: Image.network(
-                          books[bookIndex].thumbnail,
-                          fit: BoxFit.cover,
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.65,
+            ),
+            itemCount: oddIndices.length,
+            itemBuilder: (BuildContext context, int index) {
+              int bookIndex = oddIndices[index];
+              int pk = pkvalue[index];
+              print("mantap");
+              return Padding(
+                padding: const EdgeInsets.all(10),
+                child: InkWell(
+                  onTap: () {
+                    showDetailedInfo(context, books[bookIndex], pk, index);
+                  },
+                  child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: Image.network(
+                            books[bookIndex].thumbnail,
+                            fit: BoxFit.cover,
+                          ),
                         ),
-                      ),
-                      // ... tambahkan elemen lain jika perlu ...
-                    ],
+                        // ... tambahkan elemen lain jika perlu ...
+                      ],
+                    ),
                   ),
                 ),
-              ),
-            );
-          },
-        );
-      } else if (snapshot.hasError) {
-        return Text('Error: ${snapshot.error}');
-      }
-      return const CircularProgressIndicator();
-    },
-  );
-}
-
+              );
+            },
+          );
+        } else if (snapshot.hasError) {
+          return Text('Error: ${snapshot.error}');
+        }
+        return const CircularProgressIndicator();
+      },
+    );
+  }
 }

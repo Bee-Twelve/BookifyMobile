@@ -98,13 +98,15 @@ class _BookLibraryState extends State<BookLibrary> {
 
   Future<void> tambahkanBookmark(int idBuku) async {
     final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
-    String url = "https://beetwelve.site//bookmark/add_bookmark/$idBuku/";
+    String url = "/bookmark/add_bookmark/$idBuku/";
 
     var responseMap = await cookieRequest.post(
       url,
-      json.encode({
-        "forum_id": idBuku,
-      }),
+      json.encode(
+        {
+          "forum_id": idBuku,
+        },
+      ),
     );
   }
 
@@ -458,7 +460,7 @@ class _BookLibraryState extends State<BookLibrary> {
                       ),
                       InkWell(
                         onTap: () {
-                          tambahkanBookmark(index + 1);
+                          tambahkanBookmark(book.pk);
                         }, // TODO: BOOKMARK BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),

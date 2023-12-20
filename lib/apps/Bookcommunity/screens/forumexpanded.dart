@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 
+
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 
 import '../model/Forum.dart';
@@ -37,7 +38,8 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     // Convert cookies map to cookie header string
     var cookies = cookieRequest.cookies;
     if (cookies != null && cookies.isNotEmpty) {
-      headers['Cookie'] = cookies.entries.map((e) => '${e.key}=${e.value.value}').join('; ');
+      headers['Cookie'] =
+          cookies.entries.map((e) => '${e.key}=${e.value.value}').join('; ');
     }
 
     var response = await http.delete(
@@ -58,6 +60,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
       _showAlert(context, 'Error: ${responseMap['message']}');
     }
   }
+
   void _showSuccessAlertAndNavigateBack(BuildContext context, String message) {
     showDialog(
       context: context,
@@ -69,14 +72,14 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
             child: Text('OK'),
             onPressed: () {
               Navigator.of(context).pop(); // Dismiss the AlertDialog
-              Navigator.of(context).pop(true); // Go back and signal the deletion
+              Navigator.of(context)
+                  .pop(true); // Go back and signal the deletion
             },
           ),
         ],
       ),
     );
   }
-
 
   Future<void> _fetchDiscussions() async {
     var discussionUrl =
@@ -124,7 +127,9 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   }
 
 
-  Future<void> _addDiscussion(BuildContext context, int forumId, String discussionText) async {
+  Future<void> _addDiscussion(
+      BuildContext context, int forumId, String discussionText) async {
+
     final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
     String url = '/bookcommunity/create_discussion_flutter/';
 

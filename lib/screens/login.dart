@@ -1,6 +1,7 @@
 import 'package:bookify/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -119,6 +120,7 @@ class _LoginPageState extends State<LoginPage> {
                         'username': username,
                         'password': password,
                       });
+
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];

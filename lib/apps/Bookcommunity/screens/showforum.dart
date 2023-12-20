@@ -16,15 +16,20 @@ class ProductPage extends StatefulWidget {
 
 class _ProductPageState extends State<ProductPage> {
   Future<List<Forum>> fetchForums() async {
-    var forumUrl = Uri.parse('https://beetwelve.site/bookcommunity/show_json_forum/');
-    var forumResponse = await http.get(forumUrl, headers: {"Content-Type": "application/json"});
+    var forumUrl =
+        Uri.parse('https://beetwelve.site/bookcommunity/show_json_forum/');
+    var forumResponse =
+        await http.get(forumUrl, headers: {"Content-Type": "application/json"});
     return forumFromJson(utf8.decode(forumResponse.bodyBytes));
   }
 
   Future<Map<int, List<Discussion>>> fetchDiscussions() async {
-    var discussionUrl = Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
-    var discussionResponse = await http.get(discussionUrl, headers: {"Content-Type": "application/json"});
-    List<Discussion> discussions = discussionFromJson(utf8.decode(discussionResponse.bodyBytes));
+    var discussionUrl =
+        Uri.parse('https://beetwelve.site/bookcommunity/show_json_discussion/');
+    var discussionResponse = await http
+        .get(discussionUrl, headers: {"Content-Type": "application/json"});
+    List<Discussion> discussions =
+        discussionFromJson(utf8.decode(discussionResponse.bodyBytes));
 
     Map<int, List<Discussion>> map = {};
     for (var discussion in discussions) {
@@ -63,8 +68,9 @@ class _ProductPageState extends State<ProductPage> {
           ElevatedButton.icon(
             onPressed: () async {
               final bool added = await Navigator.of(context).push(
-                MaterialPageRoute(builder: (context) => AddForumPage()),
-              ) ?? false;
+                    MaterialPageRoute(builder: (context) => AddForumPage()),
+                  ) ??
+                  false;
               if (added) {
                 setState(() {
                   // Refresh the forums list
@@ -80,8 +86,6 @@ class _ProductPageState extends State<ProductPage> {
               ),
             ),
           ),
-
-
         ],
       ),
     );
@@ -98,8 +102,8 @@ class _ProductPageState extends State<ProductPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (forumSnapshot.hasError) {
             return Center(child: Text('Error: ${forumSnapshot.error}'));
-          // } else if (!forumSnapshot.hasData || forumSnapshot.data!.isEmpty) {
-          //   return const Center(child: Text('No data available'));
+            // } else if (!forumSnapshot.hasData || forumSnapshot.data!.isEmpty) {
+            //   return const Center(child: Text('No data available'));
           } else {
             List<Forum> forums = forumSnapshot.data!;
             return Column(
@@ -109,14 +113,17 @@ class _ProductPageState extends State<ProductPage> {
                   child: FutureBuilder<Map<int, List<Discussion>>>(
                     future: fetchDiscussions(),
                     builder: (context, discussionSnapshot) {
-                      if (discussionSnapshot.connectionState == ConnectionState.waiting) {
+                      if (discussionSnapshot.connectionState ==
+                          ConnectionState.waiting) {
                         return const Center(child: CircularProgressIndicator());
                       } else if (discussionSnapshot.hasError) {
-                        return Center(child: Text('Error: ${discussionSnapshot.error}'));
-                      // } else if (!discussionSnapshot.hasData || discussionSnapshot.data!.isEmpty) {
-                      //   return const Center(child: Text('No discussions available'));
+                        return Center(
+                            child: Text('Error: ${discussionSnapshot.error}'));
+                        // } else if (!discussionSnapshot.hasData || discussionSnapshot.data!.isEmpty) {
+                        //   return const Center(child: Text('No discussions available'));
                       } else {
-                        Map<int, List<Discussion>> idToDiscussion = discussionSnapshot.data!;
+                        Map<int, List<Discussion>> idToDiscussion =
+                            discussionSnapshot.data!;
                         return ListView.builder(
                           itemCount: forums.length,
                           itemBuilder: (_, index) {
@@ -126,9 +133,11 @@ class _ProductPageState extends State<ProductPage> {
                               margin: const EdgeInsets.all(8),
                               child: InkWell(
                                 onTap: () async {
-                                  final bool? deleted = await Navigator.of(context).push(
+                                  final bool? deleted =
+                                      await Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ForumDetailPage(forum: forum),
+                                      builder: (context) =>
+                                          ForumDetailPage(forum: forum),
                                     ),
                                   );
                                   if (deleted == true) {
@@ -141,8 +150,10 @@ class _ProductPageState extends State<ProductPage> {
                                   child: Padding(
                                     padding: const EdgeInsets.all(10.0),
                                     child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      mainAxisAlignment:
+                                          MainAxisAlignment.spaceAround,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Text(
                                           "Book : ${forum.fields.book}",

@@ -47,13 +47,11 @@ Media untuk berdonasi buku yang disalurkan ke sekolah, panti asuhan, dan lain se
 Filter informasi data buku yang "akan dibaca" oleh user.
 
 ## Peran atau aktor pengguna aplikasi
-Peran dibagi menjadi tiga:
+Peran dibagi menjadi:
 
 - **Guest** (Dapat mengakses aplikasi dengan limitasi tertentu)
 
 - **Member** (Dapat mengakses fitur aplikasi secara full)
-
-- **Admin** (Fitur sama dengan 'Member', ditambah dengan beberapa fitur untuk mengakses sistem dari aplikasi)
 
 ## Alur pengintegrasian dengan web service untuk terhubung dengan aplikasi web yang sudah dibuat saat Proyek Tengah Semester
 1. Melengkapi `end-point` pada web untuk tiap modul (baik untuk mengambil dan mengirim data).
@@ -64,4 +62,6 @@ Peran dibagi menjadi tiga:
 
 ## Tautan Berita Acara
 Link menuju spreadsheets: \
+
 https://docs.google.com/spreadsheets/d/1RLkGZIniGB1llOKwAel8rGDPDPD_0pBh/edit#gid=1025314475
+

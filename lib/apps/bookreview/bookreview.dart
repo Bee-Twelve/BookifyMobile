@@ -22,6 +22,7 @@ class BookReview extends StatefulWidget {
 class _BookReviewState extends State<BookReview> {
   // late Future<List<Book>> booksFuture = Future.value([]);
   // late Future<List<Book>> booksFuture;
+
   late Future<List<Map<String, dynamic>>> myBooks;
   late String username = '';
 
@@ -35,6 +36,14 @@ class _BookReviewState extends State<BookReview> {
     myBooks = getBooks();
 
     // booksFuture = loadMockBooksData();
+    fetchBook('');
+    // Listen to the SearchQueryProvider
+    final searchQueryProvider =
+        Provider.of<SearchQueryProvider>(context, listen: false);
+    searchQueryProvider.addListener(() {
+      // Call fetchBook whenever the search query changes
+      fetchBook(searchQueryProvider.query);
+    });
   }
 
   // * ========== METHODS ==========

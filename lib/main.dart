@@ -5,6 +5,7 @@ import 'package:provider/provider.dart';
 import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/login_or_reg.dart';
 import 'package:bookify/utils/provider_class.dart';
+import 'package:bookify/utils/provider_class.dart';
 
 void main() {
   runApp(const MyApp());
@@ -28,8 +29,6 @@ class MyApp extends StatelessWidget {
               create: (_) => SearchQueryProvider()),
           ChangeNotifierProvider<BookshelfProvider>(
               create: (_) => BookshelfProvider()),
-          // ChangeNotifierProvider<BookreviewProvider>(
-          //     create: (_) => BookreviewProvider()),
         ],
         child: MaterialApp(
             title: 'Flutter App',

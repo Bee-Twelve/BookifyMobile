@@ -1,4 +1,6 @@
 import 'package:bookify/main.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/models.dart';
@@ -7,6 +9,7 @@ import 'package:provider/provider.dart';
 import 'package:bookify/utils/provider_class.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:http/http.dart' as http;
 
 class BookLibrary extends StatefulWidget {
   const BookLibrary({super.key});
@@ -91,6 +94,18 @@ class _BookLibraryState extends State<BookLibrary> {
     if (!await launchUrl(url)) {
       throw Exception('Could not launch $url');
     }
+  }
+
+  Future<void> tambahkanBookmark(int idBuku) async {
+    final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
+    String url = "https://beetwelve.site//bookmark/add_bookmark/$idBuku/";
+
+    var responseMap = await cookieRequest.post(
+      url,
+      json.encode({
+        "forum_id": idBuku,
+      }),
+    );
   }
 
   void showDetailedInfo(BuildContext context, BookDataset book) {
@@ -442,7 +457,9 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {}, // TODO: BOOKMARK BUTTON IMPLEMENTATION
+                        onTap: () {
+                          tambahkanBookmark(index + 1);
+                        }, // TODO: BOOKMARK BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,

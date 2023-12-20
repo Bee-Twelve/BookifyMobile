@@ -36,7 +36,7 @@ class _BookLibraryState extends State<Home> {
     const Text('BookDonation Tab Content'),
     const BookLibrary(),
     const ProductPage(),
-    const Text('BookMark Tab Content'),
+    const BookMark(),
     const BookshelfPage(),
     const BookFavorite(),
     // other tabs content

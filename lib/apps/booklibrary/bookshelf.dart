@@ -6,6 +6,7 @@ import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:bookify/utils/provider_class.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookshelfPage extends StatefulWidget {
   const BookshelfPage({super.key});
@@ -15,6 +16,7 @@ class BookshelfPage extends StatefulWidget {
 }
 
 class _BookshelfPageState extends State<BookshelfPage> {
+  String status = '';
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,8 @@ class _BookshelfPageState extends State<BookshelfPage> {
     var response = [];
     if (query == '') {
       response = await request.get('/booklibrary/show-bookshelf/');
+    } else {
+      response = await request.get('/booklibrary/search-user-books?q=$query');
     }
 
     List<Bookshelf> listBook = [];
@@ -51,7 +55,93 @@ class _BookshelfPageState extends State<BookshelfPage> {
     bookDataProvider.setLoading(false);
   }
 
-  void showDetailedInfo(BuildContext context, Bookshelf book) {
+  Future<void> completeReading(int bookId) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    String url = '/booklibrary/complete-reading/';
+
+    final response = await request.post(url, {'book_id': '$bookId'});
+
+    if (response["status"] == 'success') {
+      // Handle successful response
+      Fluttertoast.showToast(
+        msg: "You have completed reading this book!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      // Refresh the bookshelf
+      fetchBook('');
+    } else {
+      // Handle error response
+      Fluttertoast.showToast(
+        msg: response["message"] ?? "Unknown error occured!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  Future<void> reReadBook(int bookId) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    String url = '/booklibrary/re-read-book/';
+
+    final response = await request.post(url, {'book_id': '$bookId'});
+
+    if (response["status"] == 'success') {
+      // Handle successful response
+      Fluttertoast.showToast(
+        msg: "You are re-reading this book!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      // Refresh the bookshelf
+      fetchBook('');
+    } else {
+      // Handle error response
+      Fluttertoast.showToast(
+        msg: response["message"] ?? "Unknown error occured!",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  Future<void> launchAmazonWithISBN(String isbn13) async {
+    final Uri url = Uri.parse('https://www.amazon.com/s?k=$isbn13');
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  String getBookStatus(String status) {
+    if (status == 'Currently Reading') {
+      return 'Done Read';
+    } else if (status == 'Completed') {
+      return 'Re-read book';
+    } else {
+      return 'Done Reads';
+    }
+  }
+
+  void showDetailedInfo(BuildContext context, Bookshelf book, String stat) {
+    var statusButton = getBookStatus(stat);
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -337,7 +427,14 @@ class _BookshelfPageState extends State<BookshelfPage> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: () {}, // TODO: BORROW BUTTON IMPLEMENTATION
+                        onTap: () {
+                          if (status == 'Currently Reading') {
+                            completeReading(book.id);
+                          } else if (status == 'Completed') {
+                            reReadBook(book.id);
+                          }
+                          Navigator.of(context).pop();
+                        },
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -346,10 +443,10 @@ class _BookshelfPageState extends State<BookshelfPage> {
                             color: const Color(0xFF4772A8),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: const Center(
+                          child: Center(
                             child: Text(
-                              'Done Read',
-                              style: TextStyle(
+                              statusButton,
+                              style: const TextStyle(
                                 fontSize: 10,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.normal,
@@ -360,7 +457,9 @@ class _BookshelfPageState extends State<BookshelfPage> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {}, // TODO: BUY ON AMAZON IMPLEMENTATION
+                        onTap: () {
+                          launchAmazonWithISBN(book.isbn13);
+                        },
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -434,7 +533,12 @@ class _BookshelfPageState extends State<BookshelfPage> {
                   padding: const EdgeInsets.all(10),
                   child: InkWell(
                     onTap: () {
-                      showDetailedInfo(context, provider.listBook[index]);
+                      status = provider.listBook[index].status;
+                      showDetailedInfo(
+                        context,
+                        provider.listBook[index],
+                        status,
+                      );
                     },
                     child: Card(
                       clipBehavior: Clip.antiAlias,
@@ -450,6 +554,18 @@ class _BookshelfPageState extends State<BookshelfPage> {
                               fit: BoxFit.cover,
                             ),
                           ),
+                          Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              provider.listBook[index].status,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          // You can add more text widgets here for additional details
                         ],
                       ),
                     ),

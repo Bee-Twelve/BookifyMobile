@@ -41,33 +41,6 @@ class BookshelfProvider extends ChangeNotifier {
   }
 }
 
-// class BookreviewProvider extends ChangeNotifier {
-//   List<BookReview> _bookreviewList = [];
-//   bool _loading = false;
-
-//   List<BookReview> get getBook => _bookreviewList;
-//   bool get loading => _loading;
-
-//   void updateBookreviewList(List<BookReview> list) {
-//     _bookreviewList = list;
-//     _loading = false;
-//     notifyListeners();
-//   }
-
-//   void setLoading(bool b) {
-//     _loading = b;
-//     notifyListeners();
-//   }
-
-//   bool checkBook() {
-//     if (_bookreviewList.isEmpty) {
-//       return false;
-//     } else {
-//       return true;
-//     }
-//   }
-// }
-
 class SearchQueryProvider extends ChangeNotifier {
   String _query = "";
 

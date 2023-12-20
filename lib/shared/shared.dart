@@ -82,9 +82,9 @@ class _TopBoxState extends State<TopBox> {
           handleFilterSelection(filterName);
         } else if (filterName == 'All Genre') {
           filterName = '';
-        } else {
-          context.read<SearchQueryProvider>().setQuery(filterName);
         }
+
+        context.read<SearchQueryProvider>().setQuery(filterName);
 
         // // Check if the selected filter is "Book Favorite"
         // if (filterName == 'Book Favorite') {

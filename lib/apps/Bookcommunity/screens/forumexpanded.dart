@@ -27,7 +27,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
 
   Future<void> _deleteForum() async {
     final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
-    String url = '/bookcommunity/delete_forum_flutter/';
+    String url = 'https://beetwelve.site/bookcommunity/delete_forum_flutter/';
     Map<String, String> headers = {
       "Content-Type": "application/json",
       // Include any other headers required for authentication

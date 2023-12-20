@@ -2,6 +2,8 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
+
+
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 
 import '../model/Forum.dart';
@@ -124,8 +126,10 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     );
   }
 
+
   Future<void> _addDiscussion(
       BuildContext context, int forumId, String discussionText) async {
+
     final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
     String url = '/bookcommunity/create_discussion_flutter/';
 

@@ -46,6 +46,7 @@ class _AddForumPageState extends State<AddForumPage> {
   }
 
   Future<bool> _addForum() async {
+
     if (_formKey.currentState!.validate()) {
       // Check if the form is valid
       String url = '/bookcommunity/create_forum_flutter/';

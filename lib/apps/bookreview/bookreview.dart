@@ -4,8 +4,6 @@ import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/book_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
-import 'package:pbp_django_auth/pbp_django_auth.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -375,22 +373,99 @@ class _BookReviewState extends State<BookReview> {
                           ),
                         ),
                       ),
+                      // InkWell(
+                      //   onTap: () {
+                      //     setState(() {
+                      //       favStatus = !favStatus;
+                      //     });
+                      //     Fluttertoast.showToast(
+                      //         msg:
+                      //             "${book["fields"]["title"]} has been add to your favorite list",
+                      //         toastLength: Toast.LENGTH_SHORT,
+                      //         gravity: ToastGravity.CENTER,
+                      //         timeInSecForIosWeb: 1,
+                      //         backgroundColor: Colors.blue[200],
+                      //         textColor: Colors.black,
+                      //         fontSize: 16.0);
+
+                      //     Navigator.pop(context);
+                      //   },
+                      //   child: Container(
+                      //     margin: const EdgeInsets.all(5),
+                      //     height: 20,
+                      //     width: 90,
+                      //     decoration: BoxDecoration(
+                      //       color: favStatus == false
+                      //           ? const Color(0xFFFE9526)
+                      //           : Colors.red,
+                      //       borderRadius: BorderRadius.circular(20),
+                      //     ),
+                      //     child: Center(
+                      //       child: Text(
+                      //         favStatus == false
+                      //             ? 'Add To Fav'
+                      //             : 'Remove from Fav',
+                      //         style: TextStyle(
+                      //           fontSize: 10,
+                      //           fontFamily: 'Inter',
+                      //           fontWeight: FontWeight.normal,
+                      //           color: Colors.white,
+                      //         ),
+                      //       ),
+                      //     ),
+                      //   ),
+                      // )
+
                       InkWell(
-                        onTap: () {
-                          setState(() {
-                            favStatus = !favStatus;
-                          });
-                          Fluttertoast.showToast(
-                              msg:
-                                  "${book["fields"]["title"]} has been add to your favorite list",
+                        onTap: () async {
+                          Navigator.pop(context);
+
+                          String apiUrl;
+                          String toastMessage;
+
+                          if (favStatus == false) {
+                            // Add to Fav
+                            apiUrl =
+                                'https://beetwelve.site/add-favorite-api/${book["fields"]["pk"]}/';
+                            toastMessage =
+                                "${book["fields"]["title"]} added to your favorite list";
+                          } else {
+                            // Remove from Fav
+                            apiUrl =
+                                'https://beetwelve.site/remove-favorite-api/${book["fields"]["pk"]}/';
+                            toastMessage =
+                                "${book["fields"]["title"]} removed from your favorite list";
+                          }
+
+                          final response = await http.post(
+                            Uri.parse(apiUrl),
+                            headers: {
+                              'Content-Type': 'application/json',
+                              // Add any other required headers
+                            },
+                          );
+
+                          if (response.statusCode == 200) {
+                            Fluttertoast.showToast(
+                              msg: toastMessage,
                               toastLength: Toast.LENGTH_SHORT,
                               gravity: ToastGravity.CENTER,
                               timeInSecForIosWeb: 1,
                               backgroundColor: Colors.blue[200],
                               textColor: Colors.black,
-                              fontSize: 16.0);
-
-                          Navigator.pop(context);
+                              fontSize: 16.0,
+                            );
+                          } else {
+                            Fluttertoast.showToast(
+                              msg: "Failed to update favorite status",
+                              toastLength: Toast.LENGTH_SHORT,
+                              gravity: ToastGravity.CENTER,
+                              timeInSecForIosWeb: 1,
+                              backgroundColor: Colors.red[200],
+                              textColor: Colors.white,
+                              fontSize: 16.0,
+                            );
+                          }
                         },
                         child: Container(
                           margin: const EdgeInsets.all(5),
@@ -416,7 +491,7 @@ class _BookReviewState extends State<BookReview> {
                             ),
                           ),
                         ),
-                      )
+                      ),
                     ],
                   )
                 ],
@@ -426,82 +501,6 @@ class _BookReviewState extends State<BookReview> {
         );
       },
     );
-  }
-
-  void addToFavorites() async {
-    final apiUrl = 'https://beetwelve.site/add-favorite-api/${widget.id}/';
-
-    final request = context.read<CookieRequest>();
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Authorization':
-            'Bearer ${request.token}', // Add the authentication token if required
-        // Add any other required headers
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Fluttertoast.showToast(
-        msg: "Added to favorites successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      // Add logic here if you want to update the UI or perform other actions
-    } else {
-      Fluttertoast.showToast(
-        msg: "Failed to add to favorites",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-  }
-
-  void removeFromFavorites() async {
-    final apiUrl = 'https://beetwelve.site/remove-favorite-api/${widget.id}/';
-
-    final request = context.read<CookieRequest>();
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      headers: {
-        'Authorization':
-            'Bearer ${request.token}', // Add the authentication token if required
-        // Add any other required headers
-      },
-    );
-
-    if (response.statusCode == 200) {
-      Fluttertoast.showToast(
-        msg: "Removed from favorites successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      // Add logic here if you want to update the UI or perform other actions
-    } else {
-      Fluttertoast.showToast(
-        msg: "Failed to remove from favorites",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
   }
 
   @override

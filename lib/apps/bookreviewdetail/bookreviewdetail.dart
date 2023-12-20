@@ -182,16 +182,47 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
   }
 
   void saveReviewAndRating() async {
-    Fluttertoast.showToast(
+    final apiUrl =
+        'https://beetwelve.site/bookreview/book/${widget.id}/add_review_api/';
+
+    final Map<String, dynamic> requestBody = {
+      'rating': _rating,
+      'comment': _reviewController.text,
+      // Add any other required fields to the requestBody
+    };
+
+    final response = await http.post(
+      Uri.parse(apiUrl),
+      body: jsonEncode(requestBody),
+      headers: {
+        'Content-Type': 'application/json',
+        // Add any other required headers
+      },
+    );
+
+    if (response.statusCode == 201) {
+      Fluttertoast.showToast(
         msg: "Review and rating submitted successfully",
         toastLength: Toast.LENGTH_SHORT,
         gravity: ToastGravity.CENTER,
         timeInSecForIosWeb: 1,
         backgroundColor: Colors.green[200],
         textColor: Colors.white,
-        fontSize: 16.0);
+        fontSize: 16.0,
+      );
 
-    Navigator.pop(context);
+      Navigator.pop(context);
+    } else {
+      Fluttertoast.showToast(
+        msg: "Failed to submit review and rating",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
   }
 
   @override
@@ -401,8 +432,45 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                                                         )),
                                                   ),
                                                   InkWell(
-                                                    onTap: () {
-                                                      Fluttertoast.showToast(
+                                                    // onTap: () {
+                                                    //   Fluttertoast.showToast(
+                                                    //       msg:
+                                                    //           "Review has been deleted",
+                                                    //       toastLength: Toast
+                                                    //           .LENGTH_SHORT,
+                                                    //       gravity: ToastGravity
+                                                    //           .CENTER,
+                                                    //       timeInSecForIosWeb: 1,
+                                                    //       backgroundColor:
+                                                    //           Colors.green[400],
+                                                    //       textColor:
+                                                    //           Colors.black,
+                                                    //       fontSize: 16.0);
+
+                                                    //   Navigator.pop(context);
+                                                    // },
+
+                                                    // Inside the onTap function for the "Delete" button
+                                                    onTap: () async {
+                                                      int reviewId = review[
+                                                          "pk"]; // Assuming the review ID field is 'id'
+
+                                                      final apiUrl =
+                                                          'https://beetwelve.site/bookreview/book/api_delete_review/$reviewId/';
+
+                                                      final response =
+                                                          await http.delete(
+                                                        Uri.parse(apiUrl),
+                                                        headers: {
+                                                          'Content-Type':
+                                                              'application/json',
+                                                          // Add any other required headers
+                                                        },
+                                                      );
+
+                                                      if (response.statusCode ==
+                                                          200) {
+                                                        Fluttertoast.showToast(
                                                           msg:
                                                               "Review has been deleted",
                                                           toastLength: Toast
@@ -414,10 +482,28 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                                                               Colors.green[400],
                                                           textColor:
                                                               Colors.black,
-                                                          fontSize: 16.0);
+                                                          fontSize: 16.0,
+                                                        );
 
-                                                      Navigator.pop(context);
+                                                        Navigator.pop(context);
+                                                      } else {
+                                                        Fluttertoast.showToast(
+                                                          msg:
+                                                              "Failed to delete the review",
+                                                          toastLength: Toast
+                                                              .LENGTH_SHORT,
+                                                          gravity: ToastGravity
+                                                              .CENTER,
+                                                          timeInSecForIosWeb: 1,
+                                                          backgroundColor:
+                                                              Colors.red[200],
+                                                          textColor:
+                                                              Colors.white,
+                                                          fontSize: 16.0,
+                                                        );
+                                                      }
                                                     },
+
                                                     child: Container(
                                                         width: 50,
                                                         alignment:

@@ -1,13 +1,28 @@
-import 'package:bookify/screens/profile.dart';
+import 'package:bookify/apps/bookfavorite/bookfavorite.dart';
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 
 // * ============================== TOP BOX ==============================
-class TopBox extends StatelessWidget {
+class TopBox extends StatefulWidget {
   final String username;
   final String module;
 
   const TopBox({super.key, required this.username, required this.module});
+
+  @override
+  State<TopBox> createState() => _TopBoxState();
+}
+
+class _TopBoxState extends State<TopBox> {
+  late TextEditingController searchController;
+
+  @override
+  void initState() {
+    super.initState();
+    searchController = TextEditingController();
+  }
 
   void _showFilterPopup(BuildContext context) {
     showModalBottomSheet(
@@ -18,16 +33,16 @@ class TopBox extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _buildFilterOption(context, 'Book Favorite'),
-              _buildFilterOption(context, 'Genre 1'),
-              _buildFilterOption(context, 'Genre 2'),
-              _buildFilterOption(context, 'Genre 3'),
-              _buildFilterOption(context, 'Genre 4'),
-              _buildFilterOption(context, 'Genre 5'),
-              _buildFilterOption(context, 'Genre 6'),
-              _buildFilterOption(context, 'Genre 7'),
-              _buildFilterOption(context, 'Genre 8'),
-              _buildFilterOption(context, 'Genre 9'),
-              _buildFilterOption(context, 'Genre 10'),
+              _buildFilterOption(context, 'Fiction'),
+              _buildFilterOption(context, 'Juvenile Fiction'),
+              _buildFilterOption(context, 'Biography & Autobiography'),
+              _buildFilterOption(context, 'History'),
+              _buildFilterOption(context, 'Literary Criticism'),
+              _buildFilterOption(context, 'Philosophy'),
+              _buildFilterOption(context, 'Religion'),
+              _buildFilterOption(context, 'Comics & Graphic Novels'),
+              _buildFilterOption(context, 'Drama'),
+              _buildFilterOption(context, 'Juvenile Nonfiction'),
             ],
           ),
         );
@@ -39,8 +54,20 @@ class TopBox extends StatelessWidget {
     return ListTile(
       title: Text(filterName),
       onTap: () {
-        // TODO: Handle filter selection
-        Navigator.pop(context); // Close the bottom sheet after selection
+        // Close the bottom sheet after selection
+        Navigator.pop(context);
+
+        // Check if the selected filter is "Book Favorite"
+        if (filterName == 'Book Favorite') {
+          // Navigate to the BookFavorite screen
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => const BookFavorite()),
+          );
+        } else {
+          // Handle other filter selections
+          context.read<SearchQueryProvider>().setQuery(filterName);
+        }
       },
     );
   }
@@ -74,10 +101,7 @@ class TopBox extends StatelessWidget {
               children: [
                 InkWell(
                   onTap: () {
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(builder: (context) => const Profile()),
-                    );
+                    // TODO: Navigate ke Profile Detail
                   },
                   child: SvgPicture.asset(
                     'assets/icons/profile_icon.svg',
@@ -87,7 +111,7 @@ class TopBox extends StatelessWidget {
                 ),
                 const SizedBox(width: 10),
                 Text(
-                  "Hello $username!\n$module",
+                  "Hello ${widget.username}!\n${widget.module}",
                   style: const TextStyle(
                       fontSize: 20,
                       fontFamily: 'Inter',
@@ -107,9 +131,27 @@ class TopBox extends StatelessWidget {
                   // * SEARCH BAR
                   SizedBox(
                     height: 42,
-                    width: MediaQuery.of(context).size.width * .7,
+                    width: 167,
                     child: TextField(
+                      // * Search Controller
+                      controller: searchController,
+                      onSubmitted: (String value) {
+                        context.read<SearchQueryProvider>().setQuery(value);
+                      },
+                      // * Text Decoration
                       decoration: InputDecoration(
+                        suffixIcon: InkWell(
+                          onTap: () {
+                            context
+                                .read<SearchQueryProvider>()
+                                .setQuery(searchController.text);
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: SvgPicture.asset(
+                                'assets/icons/search_icon.svg'),
+                          ),
+                        ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(10),
                           borderSide: const BorderSide(color: Colors.white),
@@ -131,11 +173,6 @@ class TopBox extends StatelessWidget {
                             fontFamily: 'Inter',
                             fontWeight: FontWeight.bold,
                             color: Colors.white),
-                        suffixIcon: Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child:
-                              SvgPicture.asset('assets/icons/search_icon.svg'),
-                        ),
                       ),
                     ),
                   ),

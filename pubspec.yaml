@@ -21,6 +21,7 @@ dependencies:
   fluttertoast: ^8.2.4
   flash: ^3.1.0
   shared_preferences: ^2.0.8
+  pbp_django_auth_extended: ^0.5.3
 
 dev_dependencies:
   flutter_test:

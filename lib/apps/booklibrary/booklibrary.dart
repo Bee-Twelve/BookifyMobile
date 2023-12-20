@@ -1,8 +1,10 @@
+import 'package:bookify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
-import 'package:bookify/models/book_model.dart';
-import 'package:bookify/utils/book_service.dart';
-import 'package:bookify/models/book_model.dart';
+import 'package:bookify/models/models.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
+import 'package:provider/provider.dart';
+import 'package:bookify/utils/provider_class.dart';
 
 class BookLibrary extends StatefulWidget {
   const BookLibrary({super.key});
@@ -12,15 +14,45 @@ class BookLibrary extends StatefulWidget {
 }
 
 class _BookLibraryState extends State<BookLibrary> {
-  late Future<List<Book>> booksFuture;
-
   @override
   void initState() {
     super.initState();
-    booksFuture = loadMockBooksData(); // Load your mock data
+
+    fetchBook('');
+    // Listen to the SearchQueryProvider
+    final searchQueryProvider =
+        Provider.of<SearchQueryProvider>(context, listen: false);
+    searchQueryProvider.addListener(() {
+      // Call fetchBook whenever the search query changes
+      fetchBook(searchQueryProvider.query);
+    });
   }
 
-  void showDetailedInfo(BuildContext context, Book book) {
+  // * ========== METHODS ==========
+  Future<void> fetchBook(String query) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final bookDataProvider =
+        Provider.of<BookDataProvider>(context, listen: false);
+
+    var response = [];
+    if (query == '') {
+      response = await request.get('/api/books/');
+    } else {
+      response = await request.get('/api/books/search?q=$query');
+    }
+
+    List<BookDataset> listBook = [];
+    for (var book in response) {
+      if (book != null) {
+        listBook.add(BookDataset.fromJson(book));
+      }
+    }
+
+    bookDataProvider.updateList(listBook);
+    bookDataProvider.setLoading(false);
+  }
+
+  void showDetailedInfo(BuildContext context, Fields book) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -70,27 +102,25 @@ class _BookLibraryState extends State<BookLibrary> {
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            6), // Apply border radius here
+                        borderRadius: BorderRadius.circular(6),
                         child: Image.network(book.thumbnail,
-                            width: 150,
-                            height: 200,
-                            fit: BoxFit
-                                .cover // This will cover the bounds of the ClipRRect
-                            ),
-                      ),
-                      const SizedBox(
-                        width: 20,
+                            width: 150, height: 200, fit: BoxFit.cover),
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * .3,
-                        child: Text(
-                          book.title,
-                          style: const TextStyle(
-                            fontSize: 25,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                        width: 150,
+                        height: 200,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            book.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -119,7 +149,7 @@ class _BookLibraryState extends State<BookLibrary> {
                     height: 180,
                     child: SingleChildScrollView(
                       child: Text(
-                        book.description,
+                        book.description.replaceAll("â", "'"),
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -138,9 +168,9 @@ class _BookLibraryState extends State<BookLibrary> {
                   // * ========== DETAILS (GENRE to ISBN) ==========
                   Row(
                     children: [
-                      const Text(
-                        "Fiction ",
-                        style: TextStyle(
+                      Text(
+                        "${book.genre} ",
+                        style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w900,
@@ -169,13 +199,18 @@ class _BookLibraryState extends State<BookLibrary> {
                           color: Colors.white,
                         ),
                       ),
-                      Text(
-                        ": ${book.author}",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          ": ${book.author}",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -394,51 +429,55 @@ class _BookLibraryState extends State<BookLibrary> {
     );
   }
 
+  // * ========== BUILD ==========
+
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder(
-      future: booksFuture,
-      builder: (context, snapshot) {
-        if (snapshot.hasData) {
-          List<Book> books = snapshot.data!;
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.65,
-            ),
-            itemCount: books.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: InkWell(
-                  onTap: () {
-                    showDetailedInfo(context, books[index]);
-                  },
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Image.network(
-                            books[index].thumbnail,
-                            fit: BoxFit.cover,
+    return Consumer<BookDataProvider>(
+      builder: (context, provider, child) {
+        if (provider.loading) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          if (provider.listBook.isEmpty) {
+            return const Center(child: Text("Buku tidak ditemukan"));
+          } else {
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.65,
+              ),
+              itemCount: provider.listBook.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: InkWell(
+                    onTap: () {
+                      showDetailedInfo(
+                          context, provider.listBook[index].fields);
+                    },
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              provider.listBook[index].fields.thumbnail,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
-        } else if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
+                );
+              },
+            );
+          }
         }
-        return const CircularProgressIndicator();
       },
     );
   }

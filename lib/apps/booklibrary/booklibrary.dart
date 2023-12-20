@@ -1,6 +1,11 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/book_model.dart';
+import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 class BookLibrary extends StatefulWidget {
   const BookLibrary({super.key});
@@ -18,7 +23,22 @@ class _BookLibraryState extends State<BookLibrary> {
     booksFuture = loadMockBooksData(); // Load your mock data
   }
 
-  void showDetailedInfo(BuildContext context, Book book) {
+
+Future<void> tambahkanBookmark(int idBuku) async {
+
+  final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
+  String url = "https://beetwelve.site//bookmark/add_bookmark/$idBuku/";
+  
+var responseMap = await cookieRequest.post(
+      url,
+      json.encode({
+        "forum_id": idBuku,
+      
+      }),
+    );
+}
+
+  void showDetailedInfo(BuildContext context, Book book, int index) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -361,7 +381,9 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {}, // TODO: BOOKMARK BUTTON IMPLEMENTATION
+                          onTap: () {
+                            tambahkanBookmark(index+1); 
+                          }, // TODO: BOOKMARK BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -413,7 +435,7 @@ class _BookLibraryState extends State<BookLibrary> {
                 padding: const EdgeInsets.all(10),
                 child: InkWell(
                   onTap: () {
-                    showDetailedInfo(context, books[index]);
+                    showDetailedInfo(context, books[index], index);
                   },
                   child: Card(
                     clipBehavior: Clip.antiAlias,

@@ -3,7 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:bookify/models/book_model.dart';
 import 'package:bookify/utils/book_service.dart';
-
+import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:provider/provider.dart';
 
 
 class GlobalData {
@@ -31,6 +32,7 @@ class BookMark extends StatefulWidget {
 
 class _BookMarkState extends State<BookMark> {
   late Future<List<Book>> booksFuture;
+  
 
   @override
   void initState() {
@@ -40,7 +42,7 @@ class _BookMarkState extends State<BookMark> {
   }
   
 Future<void> _deleteBook(int pk) async {
-  var url = Uri.parse('http://localhost:8000/bookmark/delete/$pk/');
+  var url = Uri.parse('https://beetwelve.site/bookmark/delete/$pk/');
 
   try {
     var response = await http.delete(url);
@@ -49,6 +51,11 @@ Future<void> _deleteBook(int pk) async {
       // Buku berhasil dihapus dari server
       print('Buku berhasil dihapus');
       // Lakukan tindakan lain jika diperlukan setelah penghapusan
+      setState(() {
+        // Hapus buku dari daftar tampilan Anda di sini
+        // Misalnya, Anda dapat menggunakan filter atau menghapus pk dari displayIndices
+        GlobalData().displayIndices.remove(pk);
+      });
     } else {
       // Gagal menghapus buku
       print('Gagal menghapus buku. Status code: ${response.statusCode}');
@@ -59,13 +66,32 @@ Future<void> _deleteBook(int pk) async {
   }
 }
 
+Future<void> Borrow(int idBuku) async {
+
+  final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
+  String url = "https://beetwelve.site/booklibrary/borrow-book-flutter/";
+  
+var responseMap = await cookieRequest.post(
+      url,
+      json.encode({
+        "book_id": idBuku,
+      
+      }),
+    );
+}
+
+
+
+
 
 
 
   Future<void> fetchData() async {
-    var url = Uri.parse('http://localhost:8000/bookmark/json/');
+    var url = Uri.parse('https://beetwelve.site/bookmark/json/');
+    final cookieRequest = Provider.of<CookieRequest>(context, listen: false);
     var response = await http.get(url);
 
+    setState(() {});
     if (response.statusCode == 200) {
       List<dynamic> jsonData = jsonDecode(response.body);
       print(response.body);
@@ -93,7 +119,7 @@ Future<void> _deleteBook(int pk) async {
 
 
 
-  void showDetailedInfo(BuildContext context, Book book, int pk) {
+  void showDetailedInfo(BuildContext context, Book book, int pk, int index) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -378,32 +404,8 @@ Future<void> _deleteBook(int pk) async {
                     children: [
                       InkWell(
                       onTap: () async {
-                            int bookId = pk; // Sesuaikan dengan atribut yang sesuai dengan ID buku
-                            var url = Uri.parse('http://localhost:8000/borrow-book/'); // Sesuaikan dengan URL endpoint Anda
-
-                            try {
-                              var response = await http.post(
-                                url,
-                                body: {'book_id': bookId.toString()}, // Sesuaikan dengan key yang diharapkan di endpoint Django
-                              );
-
-                              if (response.statusCode == 200) {
-                                var data = jsonDecode(response.body);
-                                String status = data['status'];
-                                String message = data['message'];
-
-                                // Lakukan sesuatu berdasarkan status dan pesan yang diterima
-                                if (status == 'success') {
-                                  print(message); // Tampilkan pesan berhasil
-                                } else {
-                                  print(message); // Tampilkan pesan bahwa buku sudah ada di rak pengguna
-                                }
-                              } else {
-                                print('Failed to borrow book. Status code: ${response.statusCode}');
-                              }
-                            } catch (e) {
-                              print('Error: $e');
-                            }
+                            print(index);
+                            Borrow(index);
                           },
                         child: Container(
                           margin: const EdgeInsets.all(5),
@@ -504,7 +506,7 @@ Widget build(BuildContext context) {
               padding: const EdgeInsets.all(10),
               child: InkWell(
                 onTap: () {
-                  showDetailedInfo(context, books[bookIndex], pk);
+                  showDetailedInfo(context, books[bookIndex], pk, index);
                 },
                 child: Card(
                   clipBehavior: Clip.antiAlias,

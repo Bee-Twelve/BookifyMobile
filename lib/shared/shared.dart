@@ -1,15 +1,25 @@
 import 'package:bookify/apps/bookfavorite/bookfavorite.dart';
+import 'package:bookify/apps/bookreviewdetail/bookreviewdetail.dart';
+import 'package:bookify/models/bookfavorite_model.dart';
+import 'package:bookify/models/models.dart';
+import 'package:bookify/utils/provider_class.dart';
 import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 
 // * ============================== TOP BOX ==============================
+
 class TopBox extends StatefulWidget {
   final String username;
   final String module;
+  final Function(String)? onFilterSelected;
 
-  const TopBox({super.key, required this.username, required this.module});
+  const TopBox(
+      {super.key,
+      required this.username,
+      required this.module,
+      this.onFilterSelected});
 
   @override
   State<TopBox> createState() => _TopBoxState();
@@ -33,6 +43,9 @@ class _TopBoxState extends State<TopBox> {
             mainAxisSize: MainAxisSize.min,
             children: <Widget>[
               _buildFilterOption(context, 'Book Favorite'),
+              _buildFilterOption(context, 'Bookshelf'),
+              _buildFilterOption(context, 'Booklibrary'),
+              _buildFilterOption(context, 'All Genre'),
               _buildFilterOption(context, 'Fiction'),
               _buildFilterOption(context, 'Juvenile Fiction'),
               _buildFilterOption(context, 'Biography & Autobiography'),
@@ -50,6 +63,12 @@ class _TopBoxState extends State<TopBox> {
     );
   }
 
+  void handleFilterSelection(String filterName) {
+    if (widget.onFilterSelected != null) {
+      widget.onFilterSelected!(filterName);
+    }
+  }
+
   Widget _buildFilterOption(BuildContext context, String filterName) {
     return ListTile(
       title: Text(filterName),
@@ -57,17 +76,27 @@ class _TopBoxState extends State<TopBox> {
         // Close the bottom sheet after selection
         Navigator.pop(context);
 
-        // Check if the selected filter is "Book Favorite"
-        if (filterName == 'Book Favorite') {
-          // Navigate to the BookFavorite screen
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => const BookFavorite()),
-          );
+        if (filterName == 'Bookshelf' ||
+            filterName == 'Booklibrary' ||
+            filterName == 'Book Favorite') {
+          handleFilterSelection(filterName);
+        } else if (filterName == 'All Genre') {
+          filterName = '';
         } else {
-          // Handle other filter selections
           context.read<SearchQueryProvider>().setQuery(filterName);
         }
+
+        // // Check if the selected filter is "Book Favorite"
+        // if (filterName == 'Book Favorite') {
+        //   // Navigate to the BookFavorite screen
+        //   Navigator.push(
+        //     context,
+        //     MaterialPageRoute(builder: (context) => const BookFavorite()),
+        //   );
+        // } else if {
+        //   // Handle other filter selections
+        //   context.read<SearchQueryProvider>().setQuery(filterName);
+        // }
       },
     );
   }
@@ -288,3 +317,372 @@ class HomeIcon extends StatelessWidget {
   }
 }
 // * =======================================================================
+
+// * ============================== BOOK MODAL POP-UP ==============================
+
+void showDetailedInfo(
+  BuildContext context,
+  dynamic book,
+  int id,
+  bool favStatus,
+  String username,
+  Future<void> Function()? favoriteCallback,
+) {
+  showGeneralDialog(
+    context: context,
+    barrierDismissible: true,
+    barrierColor: Colors.black12,
+    barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
+    transitionDuration: const Duration(milliseconds: 200),
+    pageBuilder: (
+      BuildContext buildContext,
+      Animation animation,
+      Animation secondaryAnimation,
+    ) {
+      return Material(
+        type: MaterialType.transparency,
+        child: Center(
+          child: Container(
+            margin: const EdgeInsets.all(0),
+            padding: const EdgeInsets.all(20),
+            width: 350,
+            height: 700,
+            // width: MediaQuery.of(context).size.width * 0.9,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF535DAA), Color(0xFF1DBDA2)],
+                begin: Alignment.topCenter,
+                end: Alignment.bottomCenter,
+              ),
+              borderRadius: BorderRadius.circular(40),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // * ========== CLOSE BUTTON ==========
+                Align(
+                  alignment: Alignment.topRight,
+                  child: IconButton(
+                    icon: const Icon(
+                      Icons.close,
+                      color: Colors.white,
+                    ),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
+                ),
+                // * ========== CLOSE BUTTON ==========
+
+                // * ========== BOOK COVER & TITLE ==========
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ClipRRect(
+                      borderRadius:
+                          BorderRadius.circular(6), // Apply border radius here
+                      child: Image.network(book.fields.thumbnail,
+                          width: 100,
+                          height: 150,
+                          fit: BoxFit
+                              .cover // This will cover the bounds of the ClipRRect
+                          ),
+                    ),
+                    SizedBox(
+                      width: MediaQuery.of(context).size.width * .4,
+                      child: Text(
+                        book.fields.title,
+                        style: const TextStyle(
+                          fontSize: 25,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                // * ========== BOOK COVER & TITLE ==========
+
+                // * ========== Text "Description:" ==========
+                const Padding(
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    'Description:',
+                    style: TextStyle(
+                      fontSize: 15,
+                      fontFamily: 'Inter',
+                      fontWeight: FontWeight.w800,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+                // * ========== Text "Description:" ==========
+
+                // * ========== DESCRIPTION BOX ==========
+                SizedBox(
+                  width: double.infinity,
+                  height: 180,
+                  child: SingleChildScrollView(
+                    child: Text(
+                      book.fields.description,
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                // * ========== DESCRIPTION BOX ==========
+
+                const SizedBox(
+                  height: 8,
+                ),
+
+                // * ========== DETAILS (GENRE to ISBN) ==========
+                Row(
+                  children: [
+                    const Text(
+                      "Fiction ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      "| ${book.fields.publishedYear}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Author ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ": ${book.fields.author}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Pages ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ": ${book.fields.pages}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Rating ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ": ${book.fields.ratingsAvg}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "Total Reviewer ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ": ${book.fields.ratingsCount}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "ISBN-10 ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ": ${book.fields.isbn10}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    const Text(
+                      "ISBN-13 ",
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w900,
+                        color: Colors.white,
+                      ),
+                    ),
+                    Text(
+                      ": ${book.fields.isbn13}",
+                      style: const TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.normal,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ],
+                ),
+
+                const SizedBox(
+                  height: 10,
+                ),
+
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // * ========== BOOKREVIEW BUTTON ==========
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).pop();
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => BookReviewDetail(
+                                id: id, bookId: book.pk, username: username),
+                          ),
+                        );
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        height: 20,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF4772A8),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Center(
+                          child: Text(
+                            'Add a Review',
+                            style: TextStyle(
+                              fontSize: 10,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // * ========== BOOKREVIEW BUTTON ==========
+
+                    // * ========== FAVORITE BUTTON ==========
+                    InkWell(
+                      onTap: () async {
+                        Navigator.pop(context);
+                        if (favoriteCallback != null) {
+                          favoriteCallback();
+                        }
+                      },
+                      child: Container(
+                        margin: const EdgeInsets.all(5),
+                        height: 20,
+                        width: 90,
+                        decoration: BoxDecoration(
+                          color: favStatus == false
+                              ? const Color(0xFFFE9526)
+                              : Colors.red,
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Center(
+                          child: Text(
+                            favStatus == false
+                                ? 'Add To Fav'
+                                : 'Remove from Fav',
+                            style: const TextStyle(
+                              fontSize: 10,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.normal,
+                              color: Colors.white,
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                    // * ========== FAVORITE BUTTON ==========
+                  ],
+                )
+              ],
+            ),
+          ),
+        ),
+      );
+    },
+  );
+}
+
+// * =======================================================================
+

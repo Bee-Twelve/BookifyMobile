@@ -1,104 +1,57 @@
-import 'package:bookify/apps/bookreviewdetail/bookreviewdetail.dart';
+import 'package:bookify/main.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-// import 'package:bookify/models/book_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
-import 'package:bookify/models/bookfavorite_model.dart';
-// import 'package:bookify/shared/shared.dart';
+import 'package:bookify/models/bookshelf_model.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:bookify/utils/provider_class.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
-class BookFavorite extends StatefulWidget {
-  const BookFavorite({super.key});
+class BookshelfPage extends StatefulWidget {
+  const BookshelfPage({super.key});
 
   @override
-  State<BookFavorite> createState() => _BookFavoriteState();
+  State<BookshelfPage> createState() => _BookshelfPageState();
 }
 
-class _BookFavoriteState extends State<BookFavorite> {
-  late String username = '';
-  bool favStatus = true;
-
+class _BookshelfPageState extends State<BookshelfPage> {
   @override
   void initState() {
     super.initState();
-    fetchBookFavorite();
-  }
 
-  // * ====== FUNCTIONS =======
-  Future<List<BookFavoriteModel>> fetchBookFavorite() async {
-    final request = context.read<CookieRequest>();
-
-    try {
-      // Make a GET request to fetch favorite books
-      final response = await request.get("/bookreview/load-favorites-api/");
-
-      // Parse the JSON response into a list of BookFavorite objects
-      List<BookFavoriteModel> favoriteList = [];
-      for (var book in response) {
-        if (book != null) {
-          favoriteList.add(BookFavoriteModel.fromJson(book));
-        }
-      }
-      print(favoriteList);
-      // Return the list of favorite books
-      return favoriteList;
-    } catch (e) {
-      // In case of any errors, print the error and return an empty list
-      print("Error fetching favorite books: $e");
-      rethrow;
-    }
-  }
-
-  Future<void> removeFavorite(int bookId) async {
-    final request = Provider.of<CookieRequest>(context, listen: false);
-    String url = '/bookreview/remove-favorite-api/$bookId/';
-
-    final response = await request.post(url, {});
-
-    if (response["code"] == 200) {
-      // Handle successful response
-      Fluttertoast.showToast(
-        msg: "Successfully remove from favorite list",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-
-      // Refresh the list of favorite books
-      setState(() {
-        fetchBookFavorite();
-      });
-    } else {
-      // Handle error response
-      Fluttertoast.showToast(
-        msg: response["message"] ?? "Failed to remove from favorite list",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-  }
-
-  Future<void> loadUsername() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final uname = prefs.getString('username') ?? '';
-    print(uname);
-    setState(() {
-      username = uname;
+    fetchBook('');
+    // Listen to the SearchQueryProvider
+    final searchQueryProvider =
+        Provider.of<SearchQueryProvider>(context, listen: false);
+    searchQueryProvider.addListener(() {
+      // Call fetchBook whenever the search query changes
+      fetchBook(searchQueryProvider.query);
     });
   }
 
-  void showDetailedInfo(BuildContext context, BookFavoriteModel book, int id) {
+  // * ========== METHODS ==========
+  Future<void> fetchBook(String query) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final bookDataProvider =
+        Provider.of<BookshelfProvider>(context, listen: false);
+
+    var response = [];
+    if (query == '') {
+      response = await request.get('/booklibrary/show-bookshelf/');
+    }
+
+    List<Bookshelf> listBook = [];
+    for (var book in response) {
+      if (book != null) {
+        listBook.add(Bookshelf.fromJson(book));
+      }
+    }
+
+    bookDataProvider.updateBookshelfList(listBook);
+    bookDataProvider.setLoading(false);
+  }
+
+  void showDetailedInfo(BuildContext context, Bookshelf book) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -146,27 +99,27 @@ class _BookFavoriteState extends State<BookFavorite> {
                   // * ========== BOOK COVER & TITLE ==========
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       ClipRRect(
-                        borderRadius: BorderRadius.circular(
-                            6), // Apply border radius here
-                        child: Image.network(book.fields.thumbnail,
-                            width: 100,
-                            height: 150,
-                            fit: BoxFit
-                                .cover // This will cover the bounds of the ClipRRect
-                            ),
+                        borderRadius: BorderRadius.circular(6),
+                        child: Image.network(book.thumbnail,
+                            width: 150, height: 200, fit: BoxFit.cover),
                       ),
                       SizedBox(
-                        width: MediaQuery.of(context).size.width * .4,
-                        child: Text(
-                          book.fields.title,
-                          style: const TextStyle(
-                            fontSize: 25,
-                            fontFamily: 'Inter',
-                            fontWeight: FontWeight.w900,
-                            color: Colors.white,
+                        width: 150,
+                        height: 200,
+                        child: Align(
+                          alignment: Alignment.center,
+                          child: Text(
+                            book.title,
+                            overflow: TextOverflow.ellipsis,
+                            maxLines: 5,
+                            style: const TextStyle(
+                              fontSize: 20,
+                              fontFamily: 'Inter',
+                              fontWeight: FontWeight.w900,
+                              color: Colors.white,
+                            ),
                           ),
                         ),
                       ),
@@ -195,7 +148,9 @@ class _BookFavoriteState extends State<BookFavorite> {
                     height: 180,
                     child: SingleChildScrollView(
                       child: Text(
-                        book.fields.description,
+                        book.description
+                            .replaceAll("â", "'")
+                            .replaceAll("", "-"),
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -214,9 +169,9 @@ class _BookFavoriteState extends State<BookFavorite> {
                   // * ========== DETAILS (GENRE to ISBN) ==========
                   Row(
                     children: [
-                      const Text(
-                        "Fiction ",
-                        style: TextStyle(
+                      Text(
+                        "${book.genre} ",
+                        style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
                           fontWeight: FontWeight.w900,
@@ -224,7 +179,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                         ),
                       ),
                       Text(
-                        "| ${book.fields.publishedYear}",
+                        "| ${book.publishedYear}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -245,13 +200,18 @@ class _BookFavoriteState extends State<BookFavorite> {
                           color: Colors.white,
                         ),
                       ),
-                      Text(
-                        ": ${book.fields.author}",
-                        style: const TextStyle(
-                          fontSize: 15,
-                          fontFamily: 'Inter',
-                          fontWeight: FontWeight.normal,
-                          color: Colors.white,
+                      SizedBox(
+                        width: 250,
+                        child: Text(
+                          ": ${book.author}",
+                          overflow: TextOverflow.ellipsis,
+                          maxLines: 1,
+                          style: const TextStyle(
+                            fontSize: 15,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.normal,
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ],
@@ -268,7 +228,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                         ),
                       ),
                       Text(
-                        ": ${book.fields.pages}",
+                        ": ${book.pages}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -290,7 +250,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                         ),
                       ),
                       Text(
-                        ": ${book.fields.ratingsAvg}",
+                        ": ${book.ratingsAvg}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -312,7 +272,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                         ),
                       ),
                       Text(
-                        ": ${book.fields.ratingsCount}",
+                        ": ${book.ratingsCount}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -334,7 +294,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                         ),
                       ),
                       Text(
-                        ": ${book.fields.isbn10}",
+                        ": ${book.isbn10}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -356,7 +316,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                         ),
                       ),
                       Text(
-                        ": ${book.fields.isbn13}",
+                        ": ${book.isbn13}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -366,27 +326,18 @@ class _BookFavoriteState extends State<BookFavorite> {
                       ),
                     ],
                   ),
+                  // * ========== DETAILS (GENRE to ISBN) ==========
 
                   const SizedBox(
                     height: 10,
                   ),
 
+                  // * ========== THREE BUTTONS ==========
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      // * ========== BOOKREVIEW BUTTON ==========
                       InkWell(
-                        onTap: () {
-                          Navigator.of(context).pop();
-
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => BookReviewDetail(
-                                  id: id, bookId: book.pk, username: username),
-                            ),
-                          );
-                        },
+                        onTap: () {}, // TODO: BORROW BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -397,7 +348,7 @@ class _BookFavoriteState extends State<BookFavorite> {
                           ),
                           child: const Center(
                             child: Text(
-                              'Add a Review',
+                              'Done Read',
                               style: TextStyle(
                                 fontSize: 10,
                                 fontFamily: 'Inter',
@@ -408,42 +359,45 @@ class _BookFavoriteState extends State<BookFavorite> {
                           ),
                         ),
                       ),
-                      // * ========== BOOKREVIEW BUTTON ==========
-
-                      // * ========== FAVORITE BUTTON ==========
                       InkWell(
-                        onTap: () async {
-                          removeFavorite(book.pk);
-                          Navigator.pop(context);
-                        },
+                        onTap: () {}, // TODO: BUY ON AMAZON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
                           width: 90,
                           decoration: BoxDecoration(
-                            color: favStatus == false
-                                ? const Color(0xFFFE9526)
-                                : Colors.red,
+                            color: const Color(0xFFFFF73B),
                             borderRadius: BorderRadius.circular(20),
                           ),
-                          child: Center(
-                            child: Text(
-                              favStatus == false
-                                  ? 'Add To Fav'
-                                  : 'Remove from Fav',
-                              style: const TextStyle(
-                                fontSize: 10,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.normal,
-                                color: Colors.white,
+                          child: const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text(
+                                'Buy on ',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.normal,
+                                  color: Colors.black,
+                                ),
                               ),
-                            ),
+                              Text(
+                                textAlign: TextAlign.center,
+                                'Amazon',
+                                style: TextStyle(
+                                  fontSize: 10,
+                                  fontFamily: 'Inter',
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                       ),
-                      // * ========== FAVORITE BUTTON ==========
                     ],
                   )
+                  // * ========== THREE BUTTONS ==========
                 ],
               ),
             ),
@@ -452,57 +406,58 @@ class _BookFavoriteState extends State<BookFavorite> {
       },
     );
   }
-  // * ====== FUNCTIONS =======
+
+  // * ========== BUILD ==========
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<BookFavoriteModel>>(
-      future: fetchBookFavorite(),
-      builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator());
-        } else if (snapshot.hasError) {
-          return Center(child: Text('Error: ${snapshot.error}'));
-        } else if (!snapshot.hasData) {
-          return const Center(child: Text('No data found'));
-        } else {
-          // Data is loaded
-          List<BookFavoriteModel> books = snapshot.data!;
+    return bookCatalog();
+  }
 
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.65,
-            ),
-            itemCount: books.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: InkWell(
-                  onTap: () {
-                    showDetailedInfo(context, books[index], books[index].pk);
-                  },
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Image.network(
-                            books[index].fields.thumbnail,
-                            fit: BoxFit.cover,
+  Consumer<BookshelfProvider> bookCatalog() {
+    return Consumer<BookshelfProvider>(
+      builder: (context, provider, child) {
+        if (provider.loading) {
+          return const Center(child: CircularProgressIndicator());
+        } else {
+          if (provider.listBook.isEmpty) {
+            return const Center(child: Text("Buku tidak ditemukan"));
+          } else {
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.65,
+              ),
+              itemCount: provider.listBook.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: InkWell(
+                    onTap: () {
+                      showDetailedInfo(context, provider.listBook[index]);
+                    },
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              provider.listBook[index].thumbnail,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
+          }
         }
       },
     );

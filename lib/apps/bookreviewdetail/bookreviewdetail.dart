@@ -1,72 +1,104 @@
-import 'package:bookify/models/book_review_model.dart';
-import 'package:bookify/screens/login.dart';
-import 'package:flutter/material.dart';
+import 'package:bookify/apps/bookreviewdetail/bookreviewdetail.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
-import 'package:bookify/models/book_model.dart';
-import 'package:flutter_rating_bar/flutter_rating_bar.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+// import 'package:bookify/models/book_model.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:bookify/models/bookfavorite_model.dart';
+// import 'package:bookify/shared/shared.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-class BookReviewDetail extends StatefulWidget {
-  const BookReviewDetail(
-      {super.key,
-      required this.id,
-      required this.book,
-      required this.username});
-
-  final int id;
-
-  final Map<String, dynamic> book;
-
-  final String username;
+class BookFavorite extends StatefulWidget {
+  const BookFavorite({super.key});
 
   @override
-  State<BookReviewDetail> createState() => _BookReviewDetailState();
+  State<BookFavorite> createState() => _BookFavoriteState();
 }
 
-class _BookReviewDetailState extends State<BookReviewDetail> {
-  late Future<BookReview> _bookReviewFuture;
-
-  double _rating = 0.0;
-  final _reviewController = TextEditingController();
-  Future<BookReview> fetchBookReview() async {
-    final apiUrl =
-        'https://beetwelve.site/bookreview/book/load-books-json/${widget.id}/';
-
-    final response = await http.get(Uri.parse(apiUrl));
-
-    if (response.statusCode == 200) {
-      final Map<String, dynamic> data = json.decode(response.body);
-
-      return BookReview.fromJson(data);
-    } else {
-      throw Exception('Failed to load data from the API');
-    }
-  }
+class _BookFavoriteState extends State<BookFavorite> {
+  late String username = '';
+  bool favStatus = true;
 
   @override
   void initState() {
     super.initState();
-    // _bookReviewFuture = fetchBookReview();
+    fetchBookFavorite();
   }
 
-  @override
-  void dispose() {
-    // Clean up the controller when the widget is removed from the
-    // widget tree.
-    // _reviewController.dispose();
-    super.dispose();
+  // * ====== FUNCTIONS =======
+  Future<List<BookFavoriteModel>> fetchBookFavorite() async {
+    final request = context.read<CookieRequest>();
+
+    try {
+      // Make a GET request to fetch favorite books
+      final response = await request.get("/bookreview/load-favorites-api/");
+
+      // Parse the JSON response into a list of BookFavorite objects
+      List<BookFavoriteModel> favoriteList = [];
+      for (var book in response) {
+        if (book != null) {
+          favoriteList.add(BookFavoriteModel.fromJson(book));
+        }
+      }
+      print(favoriteList);
+      // Return the list of favorite books
+      return favoriteList;
+    } catch (e) {
+      // In case of any errors, print the error and return an empty list
+      print("Error fetching favorite books: $e");
+      rethrow;
+    }
   }
 
-  void showReviewInput(BuildContext context, int rating, String comment) {
+  Future<void> removeFavorite(int bookId) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    String url = '/bookreview/remove-favorite-api/$bookId/';
+
+    final response = await request.post(url, {});
+
+    if (response["code"] == 200) {
+      // Handle successful response
+      Fluttertoast.showToast(
+        msg: "Successfully remove from favorite list",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+
+      // Refresh the list of favorite books
+      setState(() {
+        fetchBookFavorite();
+      });
+    } else {
+      // Handle error response
+      Fluttertoast.showToast(
+        msg: response["message"] ?? "Failed to remove from favorite list",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  Future<void> loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uname = prefs.getString('username') ?? '';
+    print(uname);
     setState(() {
-      _rating = rating.toDouble();
-      _reviewController.text = comment;
+      username = uname;
     });
+  }
+
+  void showDetailedInfo(BuildContext context, BookFavoriteModel book, int id) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -85,7 +117,7 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
               margin: const EdgeInsets.all(0),
               padding: const EdgeInsets.all(20),
               width: 350,
-              height: 450,
+              height: 700,
               // width: MediaQuery.of(context).size.width * 0.9,
               decoration: BoxDecoration(
                 gradient: const LinearGradient(
@@ -96,7 +128,7 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                 borderRadius: BorderRadius.circular(40),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   // * ========== CLOSE BUTTON ==========
                   Align(
@@ -109,71 +141,309 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ),
-                  const SizedBox(height: 20),
+                  // * ========== CLOSE BUTTON ==========
 
-                  Container(
-                    decoration: BoxDecoration(
-                        color: Colors.white30,
-                        borderRadius: BorderRadius.circular(20)),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: TextField(
-                        controller: _reviewController,
-                        decoration: const InputDecoration(
-                            hintText: 'Write a short review',
-                            hintStyle: TextStyle(color: Colors.white54),
-                            border: InputBorder.none),
-                        maxLines: 5,
-                        style: const TextStyle(color: Colors.white),
+                  // * ========== BOOK COVER & TITLE ==========
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceAround,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(
+                            6), // Apply border radius here
+                        child: Image.network(book.fields.thumbnail,
+                            width: 100,
+                            height: 150,
+                            fit: BoxFit
+                                .cover // This will cover the bounds of the ClipRRect
+                            ),
+                      ),
+                      SizedBox(
+                        width: MediaQuery.of(context).size.width * .4,
+                        child: Text(
+                          book.fields.title,
+                          style: const TextStyle(
+                            fontSize: 25,
+                            fontFamily: 'Inter',
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  // * ========== BOOK COVER & TITLE ==========
+
+                  // * ========== Text "Description:" ==========
+                  const Padding(
+                    padding: EdgeInsets.all(8.0),
+                    child: Text(
+                      'Description:',
+                      style: TextStyle(
+                        fontSize: 15,
+                        fontFamily: 'Inter',
+                        fontWeight: FontWeight.w800,
+                        color: Colors.white,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 20),
-                  const Text("Rating"),
-                  RatingBar.builder(
-                    initialRating: rating.toDouble(),
-                    minRating: 1,
-                    direction: Axis.horizontal,
-                    allowHalfRating: true,
-                    unratedColor: Colors.amber.withAlpha(50),
-                    itemCount: 5,
-                    itemSize: 50.0,
-                    itemPadding: const EdgeInsets.symmetric(horizontal: 4.0),
-                    itemBuilder: (context, _) => const Icon(
-                      Icons.star ?? Icons.star,
-                      color: Colors.amber,
+                  // * ========== Text "Description:" ==========
+
+                  // * ========== DESCRIPTION BOX ==========
+                  SizedBox(
+                    width: double.infinity,
+                    height: 180,
+                    child: SingleChildScrollView(
+                      child: Text(
+                        book.fields.description,
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
-                    onRatingUpdate: (rating) {
-                      setState(() {
-                        _rating = rating;
-                      });
-                    },
-                    updateOnDrag: true,
+                  ),
+                  // * ========== DESCRIPTION BOX ==========
+
+                  const SizedBox(
+                    height: 8,
                   ),
 
-                  const SizedBox(height: 30),
-                  ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF4772A8)),
-                      onPressed: () async {
-                        saveReviewAndRating();
+                  // * ========== DETAILS (GENRE to ISBN) ==========
+                  Row(
+                    children: [
+                      const Text(
+                        "Fiction ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        "| ${book.fields.publishedYear}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "Author ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        ": ${book.fields.author}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "Pages ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        ": ${book.fields.pages}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "Rating ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        ": ${book.fields.ratingsAvg}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "Total Reviewer ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        ": ${book.fields.ratingsCount}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "ISBN-10 ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        ": ${book.fields.isbn10}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Row(
+                    children: [
+                      const Text(
+                        "ISBN-13 ",
+                        style: TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.w900,
+                          color: Colors.white,
+                        ),
+                      ),
+                      Text(
+                        ": ${book.fields.isbn13}",
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontFamily: 'Inter',
+                          fontWeight: FontWeight.normal,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ],
+                  ),
 
-                        // Fluttertoast.showToast(
-                        //     msg: "Review and rating submitted successfully",
-                        //     toastLength: Toast.LENGTH_SHORT,
-                        //     gravity: ToastGravity.CENTER,
-                        //     timeInSecForIosWeb: 1,
-                        //     backgroundColor: Colors.green[200],
-                        //     textColor: Colors.white,
-                        //     fontSize: 16.0);
+                  const SizedBox(
+                    height: 10,
+                  ),
 
-                        // Navigator.pop(context);
-                        // Navigator.pop(context);
-                      },
-                      child: const Text(
-                        "Leave a Review",
-                        style: TextStyle(color: Colors.white),
-                      ))
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      // * ========== BOOKREVIEW BUTTON ==========
+                      InkWell(
+                        onTap: () {
+                          Navigator.of(context).pop();
+
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) => BookReviewDetail(
+                                  id: id, bookId: book.pk, username: username),
+                            ),
+                          );
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          height: 20,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            color: const Color(0xFF4772A8),
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: const Center(
+                            child: Text(
+                              'Add a Review',
+                              style: TextStyle(
+                                fontSize: 10,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // * ========== BOOKREVIEW BUTTON ==========
+
+                      // * ========== FAVORITE BUTTON ==========
+                      InkWell(
+                        onTap: () async {
+                          removeFavorite(book.pk);
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          margin: const EdgeInsets.all(5),
+                          height: 20,
+                          width: 90,
+                          decoration: BoxDecoration(
+                            color: favStatus == false
+                                ? const Color(0xFFFE9526)
+                                : Colors.red,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Center(
+                            child: Text(
+                              favStatus == false
+                                  ? 'Add To Fav'
+                                  : 'Remove from Fav',
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontFamily: 'Inter',
+                                fontWeight: FontWeight.normal,
+                                color: Colors.white,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ),
+                      // * ========== FAVORITE BUTTON ==========
+                    ],
+                  )
                 ],
               ),
             ),
@@ -182,418 +452,59 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
       },
     );
   }
-
-  void saveReviewAndRating() async {
-    final apiUrl =
-        'https://beetwelve.site/bookreview/book/${widget.id}/add_review_api/';
-
-    final Map<String, dynamic> requestBody = {
-      'rating': _rating,
-      'comment': _reviewController.text,
-      // Add any other required fields to the requestBody
-    };
-
-    final response = await http.post(
-      Uri.parse(apiUrl),
-      body: jsonEncode(requestBody),
-      headers: {
-        'Content-Type': 'application/json',
-        // Add any other required headers
-      },
-    );
-
-    if (response.statusCode == 200) {
-      // Fetch the updated reviews after submitting the review
-      _bookReviewFuture = fetchBookReview();
-
-      Fluttertoast.showToast(
-        msg: "Review and rating submitted successfully",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.green[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-      Navigator.pop(context);
-    } else {
-      Fluttertoast.showToast(
-        msg: "Failed to submit review and rating",
-        toastLength: Toast.LENGTH_SHORT,
-        gravity: ToastGravity.CENTER,
-        timeInSecForIosWeb: 1,
-        backgroundColor: Colors.red[200],
-        textColor: Colors.white,
-        fontSize: 16.0,
-      );
-    }
-  }
+  // * ====== FUNCTIONS =======
 
   @override
   Widget build(BuildContext context) {
-    final request = context.watch<CookieRequest>();
-    final List<Map<String, dynamic>> reviews =
-        (widget.book["reviews"] as List<dynamic>).cast<Map<String, dynamic>>();
-    return Scaffold(
-        body: Stack(
-      children: [
-        Container(
-            // * = TOP BOX GRADIENT =
-            width: double.infinity,
-            height: 230.0,
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF535DAA), Color(0xFF1DBDA2)],
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(40.0),
-                bottomRight: Radius.circular(40.0),
-              ),
-            )),
-        Padding(
-          padding:
-              const EdgeInsets.only(top: 10, left: 20, right: 20, bottom: 10),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              AppBar(
-                leading: IconButton(
-                  color: Colors.white,
-                  icon: const Icon(Icons.arrow_back),
-                  onPressed: () {
-                    Navigator.of(context).pop();
-                  },
-                ),
-                automaticallyImplyLeading: false,
-                title: const Text(
-                  "Book Details",
-                  style: TextStyle(color: Colors.white),
-                ),
-                backgroundColor: Colors.transparent,
-                elevation: 0, // Remove the app bar shadow
-              ),
-              // const SizedBox(height: 60),
-              SizedBox(
-                width: MediaQuery.of(context).size.width,
-                child: Column(
-                  children: [
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Image.network(
-                          widget.book["fields"]["thumbnail"],
+    return FutureBuilder<List<BookFavoriteModel>>(
+      future: fetchBookFavorite(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData) {
+          return const Center(child: Text('No data found'));
+        } else {
+          // Data is loaded
+          List<BookFavoriteModel> books = snapshot.data!;
 
-                          width: 150, // Adjust the width as needed
-                          height: 210, // Adjust the height as needed
-                          fit: BoxFit.cover,
-                        ),
-                        const SizedBox(
-                          width: 15,
-                        ),
-                        SizedBox(
-                          width: MediaQuery.of(context).size.width * .5,
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              SizedBox(
-                                height: 160,
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(widget.book["fields"]["title"],
-                                        style: const TextStyle(
-                                            fontSize: 26,
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.w900)),
-                                    Text(widget.book["fields"]["author"],
-                                        style: const TextStyle(
-                                            color: Colors.white,
-                                            fontWeight: FontWeight.bold)),
-                                  ],
-                                ),
-                              ),
-                              const SizedBox(
-                                height: 20,
-                              ),
-                              ElevatedButton(
-                                  style: ElevatedButton.styleFrom(
-                                      backgroundColor: const Color(0xFF4772A8)),
-                                  onPressed: () {
-                                    showReviewInput(context, 3, '');
-                                  },
-                                  child: const Text(
-                                    "Write a Review",
-                                    style: TextStyle(color: Colors.white),
-                                  ))
-                            ],
+          return GridView.builder(
+            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+              crossAxisCount: 2,
+              childAspectRatio: 0.65,
+            ),
+            itemCount: books.length,
+            itemBuilder: (BuildContext context, int index) {
+              return Padding(
+                padding: const EdgeInsets.all(10),
+                child: InkWell(
+                  onTap: () {
+                    showDetailedInfo(context, books[index], books[index].pk);
+                  },
+                  child: Card(
+                    clipBehavior: Clip.antiAlias,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        Expanded(
+                          child: Image.network(
+                            books[index].fields.thumbnail,
+                            fit: BoxFit.cover,
                           ),
                         ),
                       ],
                     ),
-                    const SizedBox(
-                      height: 10,
-                    ),
-                    SingleChildScrollView(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          // Your other content...
-
-                          // * ========== REVIEWS ==========
-                          const Padding(
-                            padding: EdgeInsets.all(8.0),
-                            child: Text(
-                              'Reviews:',
-                              style: TextStyle(
-                                fontSize: 15,
-                                fontFamily: 'Inter',
-                                fontWeight: FontWeight.w800,
-                                color: Colors.white,
-                              ),
-                            ),
-                          ),
-                          // Display each review
-                          for (var review in reviews)
-                            Container(
-                                width: MediaQuery.of(context).size.width,
-                                margin: EdgeInsets.only(bottom: 10),
-                                decoration: BoxDecoration(
-                                  color: Colors.grey[300],
-                                  borderRadius: BorderRadius.circular(10),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.all(14.0),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        children: [
-                                          const Icon(Icons.person_2_outlined),
-                                          Text(
-                                            review["user"],
-                                            style: const TextStyle(
-                                                fontWeight: FontWeight.w600),
-                                          ),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 10),
-                                      Row(
-                                        children: [
-                                          const Text("Rating : "),
-                                          RatingBarIndicator(
-                                            rating: review["rating"].toDouble(),
-                                            itemBuilder: (context, index) =>
-                                                const Icon(
-                                              Icons.star,
-                                              color: Colors.amber,
-                                            ),
-                                            itemCount: 5,
-                                            itemSize: 20.0,
-                                            direction: Axis.horizontal,
-                                          ),
-                                          Text(
-                                              " ${review["rating"].toString()}"),
-                                        ],
-                                      ),
-                                      const SizedBox(height: 15),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text(review["comment"]),
-                                          review["user"] == widget.username
-                                              ? Row(children: [
-                                                  InkWell(
-                                                    onTap: () {
-                                                      showReviewInput(
-                                                          context,
-                                                          review["rating"],
-                                                          review["comment"]);
-                                                    },
-                                                    child: Container(
-                                                        width: 50,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                            color:
-                                                                Colors.amber),
-                                                        child: const Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  5.0),
-                                                          child: Text("Edit",
-                                                              style: TextStyle(
-                                                                  fontSize:
-                                                                      12)),
-                                                        )),
-                                                  ),
-                                                  InkWell(
-                                                    // onTap: () {
-                                                    //   Fluttertoast.showToast(
-                                                    //       msg:
-                                                    //           "Review has been deleted",
-                                                    //       toastLength: Toast
-                                                    //           .LENGTH_SHORT,
-                                                    //       gravity: ToastGravity
-                                                    //           .CENTER,
-                                                    //       timeInSecForIosWeb: 1,
-                                                    //       backgroundColor:
-                                                    //           Colors.green[400],
-                                                    //       textColor:
-                                                    //           Colors.black,
-                                                    //       fontSize: 16.0);
-
-                                                    //   Navigator.pop(context);
-                                                    // },
-
-                                                    // Inside the onTap function for the "Delete" button
-                                                    onTap: () async {
-                                                      int reviewId = review[
-                                                          "pk"]; // Assuming the review ID field is 'id'
-
-                                                      final apiUrl =
-                                                          'https://beetwelve.site/bookreview/book/api_delete_review/$reviewId/';
-
-                                                      final response =
-                                                          await http.delete(
-                                                        Uri.parse(apiUrl),
-                                                        headers: {
-                                                          'Content-Type':
-                                                              'application/json',
-                                                          // Add any other required headers
-                                                        },
-                                                      );
-
-                                                      if (response.statusCode ==
-                                                          200) {
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              "Review has been deleted",
-                                                          toastLength: Toast
-                                                              .LENGTH_SHORT,
-                                                          gravity: ToastGravity
-                                                              .CENTER,
-                                                          timeInSecForIosWeb: 1,
-                                                          backgroundColor:
-                                                              Colors.green[400],
-                                                          textColor:
-                                                              Colors.black,
-                                                          fontSize: 16.0,
-                                                        );
-
-                                                        Navigator.pop(context);
-                                                      } else {
-                                                        Fluttertoast.showToast(
-                                                          msg:
-                                                              "Failed to delete the review",
-                                                          toastLength: Toast
-                                                              .LENGTH_SHORT,
-                                                          gravity: ToastGravity
-                                                              .CENTER,
-                                                          timeInSecForIosWeb: 1,
-                                                          backgroundColor:
-                                                              Colors.red[200],
-                                                          textColor:
-                                                              Colors.white,
-                                                          fontSize: 16.0,
-                                                        );
-                                                      }
-                                                    },
-
-                                                    child: Container(
-                                                        width: 50,
-                                                        alignment:
-                                                            Alignment.center,
-                                                        decoration: BoxDecoration(
-                                                            borderRadius:
-                                                                BorderRadius
-                                                                    .circular(
-                                                                        20),
-                                                            color: Colors.red),
-                                                        child: const Padding(
-                                                          padding:
-                                                              EdgeInsets.all(
-                                                                  5.0),
-                                                          child: Text("Delete",
-                                                              style: TextStyle(
-                                                                  color: Colors
-                                                                      .white,
-                                                                  fontSize:
-                                                                      12)),
-                                                        )),
-                                                  )
-                                                ])
-                                              : widget.username == "username"
-                                                  ? InkWell(
-                                                      onTap: () {
-                                                        Fluttertoast.showToast(
-                                                            msg:
-                                                                "Review has been deleted",
-                                                            toastLength: Toast
-                                                                .LENGTH_SHORT,
-                                                            gravity:
-                                                                ToastGravity
-                                                                    .CENTER,
-                                                            timeInSecForIosWeb:
-                                                                1,
-                                                            backgroundColor:
-                                                                Colors
-                                                                    .green[400],
-                                                            textColor:
-                                                                Colors.black,
-                                                            fontSize: 16.0);
-
-                                                        Navigator.pop(context);
-                                                      },
-                                                      child: Container(
-                                                          width: 50,
-                                                          alignment:
-                                                              Alignment.center,
-                                                          decoration: BoxDecoration(
-                                                              borderRadius:
-                                                                  BorderRadius
-                                                                      .circular(
-                                                                          20),
-                                                              color:
-                                                                  Colors.red),
-                                                          child: const Padding(
-                                                            padding:
-                                                                EdgeInsets.all(
-                                                                    5.0),
-                                                            child: Text(
-                                                                "Delete",
-                                                                style: TextStyle(
-                                                                    color: Colors
-                                                                        .white,
-                                                                    fontSize:
-                                                                        12)),
-                                                          )),
-                                                    )
-                                                  : const SizedBox()
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                )),
-                          // * ========== REVIEWS ==========
-                        ],
-                      ),
-                    )
-                  ],
+                  ),
                 ),
-              )
-            ],
-          ),
-        )
-      ],
-    ));
+              );
+            },
+          );
+        }
+      },
+    );
   }
 }

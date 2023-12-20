@@ -1,6 +1,6 @@
 import 'package:bookify/screens/home.dart';
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -76,7 +76,7 @@ class _LoginPageState extends State<LoginPage> {
                       color: Color(0xFF53B9CB),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                       height:
                           30), // Space between "Login" title and form fields
                   TextFormField(
@@ -100,7 +100,7 @@ class _LoginPageState extends State<LoginPage> {
                       ),
                     ),
                   ),
-                  SizedBox(
+                  const SizedBox(
                       height:
                           40), // Space between the password field and the login button
                   ElevatedButton(
@@ -114,8 +114,8 @@ class _LoginPageState extends State<LoginPage> {
                       // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
                       // Untuk menyambungkan Android emulator dengan Django pada localhost,
                       // gunakan URL http://10.0.2.2/
-                      final response = await request.login(
-                          "https://beetwelve.site/authentication/login/", {
+                      final response =
+                          await request.login("/authentication/login/", {
                         'username': username,
                         'password': password,
                       });
@@ -160,7 +160,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                     child: const Text('Login'),
                   ),
-                  SizedBox(
+                  const SizedBox(
                       height:
                           20), // Space between the login button and the logo
                 ],

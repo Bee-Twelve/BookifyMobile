@@ -3,7 +3,7 @@
 import 'package:bookify/screens/login.dart';
 import 'package:bookify/screens/login_or_reg.dart';
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth/pbp_django_auth.dart';
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 
 class Profile extends StatelessWidget {
@@ -22,8 +22,8 @@ class Profile extends StatelessWidget {
             padding: const EdgeInsets.all(18.0),
             child: ElevatedButton(
               onPressed: () async {
-                final response = await request
-                    .logout("https://beetwelve.site/authentication/logout/");
+                final response =
+                    await request.logout("/authentication/logout/");
 
                 Navigator.pushReplacement(
                   context,

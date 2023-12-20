@@ -90,7 +90,6 @@ class _ProductPageState extends State<ProductPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Forum')),
       endDrawer: const RightDrawer(),
       body: FutureBuilder<List<Forum>>(
         future: fetchForums(),
@@ -99,8 +98,8 @@ class _ProductPageState extends State<ProductPage> {
             return const Center(child: CircularProgressIndicator());
           } else if (forumSnapshot.hasError) {
             return Center(child: Text('Error: ${forumSnapshot.error}'));
-          } else if (!forumSnapshot.hasData || forumSnapshot.data!.isEmpty) {
-            return const Center(child: Text('No data available'));
+          // } else if (!forumSnapshot.hasData || forumSnapshot.data!.isEmpty) {
+          //   return const Center(child: Text('No data available'));
           } else {
             List<Forum> forums = forumSnapshot.data!;
             return Column(
@@ -114,8 +113,8 @@ class _ProductPageState extends State<ProductPage> {
                         return const Center(child: CircularProgressIndicator());
                       } else if (discussionSnapshot.hasError) {
                         return Center(child: Text('Error: ${discussionSnapshot.error}'));
-                      } else if (!discussionSnapshot.hasData || discussionSnapshot.data!.isEmpty) {
-                        return const Center(child: Text('No discussions available'));
+                      // } else if (!discussionSnapshot.hasData || discussionSnapshot.data!.isEmpty) {
+                      //   return const Center(child: Text('No discussions available'));
                       } else {
                         Map<int, List<Discussion>> idToDiscussion = discussionSnapshot.data!;
                         return ListView.builder(
@@ -126,15 +125,15 @@ class _ProductPageState extends State<ProductPage> {
                               elevation: 4,
                               margin: const EdgeInsets.all(8),
                               child: InkWell(
-                                onTap: () {
-                                  Navigator.of(context).push(
+                                onTap: () async {
+                                  final bool? deleted = await Navigator.of(context).push(
                                     MaterialPageRoute(
-                                      builder: (context) => ForumDetailPage(
-                                        forum: forum,
-                                        // discussions: idToDiscussion[forum.pk] ?? [],
-                                      ),
+                                      builder: (context) => ForumDetailPage(forum: forum),
                                     ),
                                   );
+                                  if (deleted == true) {
+                                    setState(() {}); // Refresh the forums list
+                                  }
                                 },
                                 child: SizedBox(
                                   height: 100,

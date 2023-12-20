@@ -5,6 +5,8 @@ import 'package:bookify/models/models.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:bookify/utils/provider_class.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class BookLibrary extends StatefulWidget {
   const BookLibrary({super.key});
@@ -36,7 +38,7 @@ class _BookLibraryState extends State<BookLibrary> {
 
     var response = [];
     if (query == '') {
-      response = await request.get('/api/books/');
+      response = await request.get('/api/books/fetch-book/');
     } else {
       response = await request.get('/api/books/search?q=$query');
     }
@@ -52,7 +54,46 @@ class _BookLibraryState extends State<BookLibrary> {
     bookDataProvider.setLoading(false);
   }
 
-  void showDetailedInfo(BuildContext context, Fields book) {
+  Future<void> borrowBook(int bookId) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    const apiUrl = '/booklibrary/add-to-bookshelf/';
+
+    final response = await request.post(apiUrl, {
+      'book_id': bookId.toString(),
+    });
+
+    // Check the response status and display an appropriate message
+    if (response['status'] == 'success') {
+      Fluttertoast.showToast(
+        msg: response['message'],
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } else {
+      Fluttertoast.showToast(
+        msg: response['message'] ?? 'Failed to add book to shelf',
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  Future<void> launchAmazonWithISBN(String isbn13) async {
+    final Uri url = Uri.parse('https://www.amazon.com/s?k=$isbn13');
+    if (!await launchUrl(url)) {
+      throw Exception('Could not launch $url');
+    }
+  }
+
+  void showDetailedInfo(BuildContext context, BookDataset book) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -103,7 +144,7 @@ class _BookLibraryState extends State<BookLibrary> {
                     children: [
                       ClipRRect(
                         borderRadius: BorderRadius.circular(6),
-                        child: Image.network(book.thumbnail,
+                        child: Image.network(book.fields.thumbnail,
                             width: 150, height: 200, fit: BoxFit.cover),
                       ),
                       SizedBox(
@@ -112,7 +153,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         child: Align(
                           alignment: Alignment.center,
                           child: Text(
-                            book.title,
+                            book.fields.title,
                             overflow: TextOverflow.ellipsis,
                             maxLines: 5,
                             style: const TextStyle(
@@ -149,7 +190,9 @@ class _BookLibraryState extends State<BookLibrary> {
                     height: 180,
                     child: SingleChildScrollView(
                       child: Text(
-                        book.description.replaceAll("â", "'"),
+                        book.fields.description
+                            .replaceAll("â", "'")
+                            .replaceAll("", "-"),
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -169,7 +212,7 @@ class _BookLibraryState extends State<BookLibrary> {
                   Row(
                     children: [
                       Text(
-                        "${book.genre} ",
+                        "${book.fields.genre} ",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -178,7 +221,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       Text(
-                        "| ${book.publishedYear}",
+                        "| ${book.fields.publishedYear}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -202,7 +245,7 @@ class _BookLibraryState extends State<BookLibrary> {
                       SizedBox(
                         width: 250,
                         child: Text(
-                          ": ${book.author}",
+                          ": ${book.fields.author}",
                           overflow: TextOverflow.ellipsis,
                           maxLines: 1,
                           style: const TextStyle(
@@ -227,7 +270,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       Text(
-                        ": ${book.pages}",
+                        ": ${book.fields.pages}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -249,7 +292,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       Text(
-                        ": ${book.ratingsAvg}",
+                        ": ${book.fields.ratingsAvg}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -271,7 +314,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       Text(
-                        ": ${book.ratingsCount}",
+                        ": ${book.fields.ratingsCount}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -293,7 +336,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       Text(
-                        ": ${book.isbn10}",
+                        ": ${book.fields.isbn10}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -315,7 +358,7 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       Text(
-                        ": ${book.isbn13}",
+                        ": ${book.fields.isbn13}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -336,7 +379,9 @@ class _BookLibraryState extends State<BookLibrary> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       InkWell(
-                        onTap: () {}, // TODO: BORROW BUTTON IMPLEMENTATION
+                        onTap: () {
+                          borrowBook(book.pk);
+                        }, // TODO: BORROW BUTTON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -359,7 +404,9 @@ class _BookLibraryState extends State<BookLibrary> {
                         ),
                       ),
                       InkWell(
-                        onTap: () {}, // TODO: BUY ON AMAZON IMPLEMENTATION
+                        onTap: () {
+                          launchAmazonWithISBN(book.fields.isbn13);
+                        }, // TODO: BUY ON AMAZON IMPLEMENTATION
                         child: Container(
                           margin: const EdgeInsets.all(5),
                           height: 20,
@@ -433,6 +480,10 @@ class _BookLibraryState extends State<BookLibrary> {
 
   @override
   Widget build(BuildContext context) {
+    return bookCatalog();
+  }
+
+  Consumer<BookDataProvider> bookCatalog() {
     return Consumer<BookDataProvider>(
       builder: (context, provider, child) {
         if (provider.loading) {
@@ -452,8 +503,7 @@ class _BookLibraryState extends State<BookLibrary> {
                   padding: const EdgeInsets.all(10),
                   child: InkWell(
                     onTap: () {
-                      showDetailedInfo(
-                          context, provider.listBook[index].fields);
+                      showDetailedInfo(context, provider.listBook[index]);
                     },
                     child: Card(
                       clipBehavior: Clip.antiAlias,

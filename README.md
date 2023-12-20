@@ -1,3 +1,4 @@
+[![Build status](https://build.appcenter.ms/v0.1/apps/7fc1c219-a569-467f-a845-4eb933d67d8e/branches/main/badge)](https://appcenter.ms)
 # BookifyMobile
 
 ## **Anggota Kelompok `B12` :**
@@ -13,7 +14,7 @@
 - `Thariq Ziyad Al Farizi - 2206082865`
 
 ## **Tautan APK**
-TBD
+https://install.appcenter.ms/orgs/beetwelve/apps/bookifty/distribution_groups/public
 
 ## Deskripsi aplikasi (nama dan fungsi aplikasi)
 Bookify merupakan aplikasi mobile yang kami kembangkan ditujukan kepada kalangan remaja hingga dewasa, dimana mereka bisa mencari, membeli, dan berdiskusi mengenai buku pilihan mereka dengan komunitas yang ada di platform ini. Latar belakang kami menginisiasi aplikasi ini disebabkan oleh sedikitnya persentase masyarakat di Indonesia yang memiliki minat membaca buku. Fakta ini didukung oleh penelitian dari UNESCO yang menyebutkan bahwa Indonesia menempati urutan kedua dari bawah mengenai masalah literasi dunia. Disebutkan juga bahwa persentase minat baca di Indonesia hanya 0.001% artinya hanya 1 dari 1000 orang Indonesia yang memiliki minat baca yang tinggi. Berdasarkan fakta tersebut, kami termotivasi untuk mencoba membangun komunitas baca di Indonesia agar lebih luas lagi dengan mengembangkan sebuah aplikasi mobile yang aksesibel dan memiliki media untuk berdiskusi dan mencari teman yang memiliki interest yang sama di suatu komunitas yang juga memiliki segala sumber informasi mengenai buku dari semua jenis dan genre. Disini para peminat buku juga dapat langsung membeli buku yang mereka minati di BookShop kita yang akan mengarahkan langsung ke website e-commerce yang sesuai. Namun tidak hanya itu, apabila mereka belum yakin untuk membelinya langsung, mereka juga dapat mengakses library yang tersedia di aplikasi kami untuk meminjam buku (terbatas) serta memberikan ulasan dari buku yang telah dibaca, jadi mereka tetap dapat membaca dan gabung dalam komunitas di platform kami tanpa mengeluarkan uang sepeserpun. Untuk fitur pelengkap, kami menambahkan halaman donasi untuk user yang ingin berdonasi ke instansi/sekolah untuk paket up to 50+ buku, bisa berupa buku pelajaran, novel, dan lain-lain.
@@ -46,13 +47,11 @@ Media untuk berdonasi buku yang disalurkan ke sekolah, panti asuhan, dan lain se
 Filter informasi data buku yang "akan dibaca" oleh user.
 
 ## Peran atau aktor pengguna aplikasi
-Peran dibagi menjadi tiga:
+Peran dibagi menjadi:
 
 - **Guest** (Dapat mengakses aplikasi dengan limitasi tertentu)
 
 - **Member** (Dapat mengakses fitur aplikasi secara full)
-
-- **Admin** (Fitur sama dengan 'Member', ditambah dengan beberapa fitur untuk mengakses sistem dari aplikasi)
 
 ## Alur pengintegrasian dengan web service untuk terhubung dengan aplikasi web yang sudah dibuat saat Proyek Tengah Semester
 1. Melengkapi `end-point` pada web untuk tiap modul (baik untuk mengambil dan mengirim data).
@@ -63,4 +62,4 @@ Peran dibagi menjadi tiga:
 
 ## Tautan Berita Acara
 Link menuju spreadsheets: \
-https://docs.google.com/spreadsheets/d/1VaBDcJ-J5F-sH7J9VAzLqw-nakx3iZ-IuiiSpFZ_VbU/edit#gid=27040104
+https://docs.google.com/spreadsheets/d/1RLkGZIniGB1llOKwAel8rGDPDPD_0pBh/edit#gid=1025314475

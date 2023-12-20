@@ -1,12 +1,9 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
-import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
-import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:bookify/screens/home.dart';
 import 'package:bookify/screens/login_or_reg.dart';
-import 'package:bookify/utils/provider_class.dart';
 import 'package:bookify/utils/provider_class.dart';
 
 void main() {
@@ -22,7 +19,7 @@ class MyApp extends StatelessWidget {
         providers: [
           Provider(create: (_) {
             CookieRequest request =
-                CookieRequest(baseUrl: "http://10.0.2.2:8000");
+                CookieRequest(baseUrl: "https://beetwelve.site");
             return request;
           }),
           ChangeNotifierProvider<BookDataProvider>(

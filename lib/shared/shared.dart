@@ -7,6 +7,7 @@ import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:bookify/screens/profile.dart';
 
 // * ============================== TOP BOX ==============================
 
@@ -130,7 +131,11 @@ class _TopBoxState extends State<TopBox> {
               children: [
                 InkWell(
                   onTap: () {
-                    // TODO: Navigate ke Profile Detail
+                    // Navigate ke Profile Detail
+                    Navigator.pushReplacement(
+                      context,
+                      MaterialPageRoute(builder: (context) => const Profile()),
+                    );
                   },
                   child: SvgPicture.asset(
                     'assets/icons/profile_icon.svg',

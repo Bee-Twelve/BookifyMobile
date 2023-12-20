@@ -27,7 +27,7 @@ class Profile extends StatelessWidget {
 
                 Navigator.pushReplacement(
                   context,
-                  MaterialPageRoute(builder: (context) => const LoginApp()),
+                  MaterialPageRoute(builder: (context) => const LoginOrReg()),
                 );
               },
               style: ElevatedButton.styleFrom(

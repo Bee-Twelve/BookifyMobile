@@ -1,11 +1,6 @@
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
-import 'utils.dart';
-import 'package:bookify/main.dart';
-import 'package:flutter/material.dart';
-import 'package:bookify/utils/book_service.dart';
 // import 'package:bookify/models/book_model.dart';
 import 'package:bookify/models/models.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
@@ -33,7 +28,7 @@ class _DonasiDariLibraryState extends State<DonasiDariLibrary> {
         listBook.add(BookDataset.fromJson(book));
       }
     }
-    print(listBook[0].fields.description);
+
     return listBook;
   }
 
@@ -361,7 +356,7 @@ class _DonasiDariLibraryState extends State<DonasiDariLibrary> {
       create: (_) {
         BookDataProvider bdp = BookDataProvider();
         bdp.setLoading(true);
-        bdp.updateList(fetchBook(''));
+        // bdp.updateList(fetchBook(''));
         return bdp;
       },
       child: Consumer<BookDataProvider>(

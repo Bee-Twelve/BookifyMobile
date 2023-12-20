@@ -1,15 +1,12 @@
-import 'package:bookify/main.dart';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
-import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/models.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
 import 'package:bookify/utils/provider_class.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:http/http.dart' as http;
 
 class BookLibrary extends StatefulWidget {
   const BookLibrary({super.key});

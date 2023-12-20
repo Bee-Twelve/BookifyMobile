@@ -21,7 +21,7 @@ class GlobalData {
 }
 
 class BookMark extends StatefulWidget {
-  const BookMark({Key? key}) : super(key: key);
+  const BookMark({super.key});
 
   @override
   _BookMarkState createState() => _BookMarkState();
@@ -420,7 +420,7 @@ class _BookMarkState extends State<BookMark> {
                           height: 20,
                           width: 90,
                           decoration: BoxDecoration(
-                            color: Color.fromARGB(255, 255, 23, 216),
+                            color: const Color.fromARGB(255, 255, 23, 216),
                             borderRadius: BorderRadius.circular(20),
                           ),
                           child: const Center(

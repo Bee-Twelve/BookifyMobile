@@ -3,12 +3,9 @@ import 'package:bookify/models/models.dart';
 import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
-import 'package:bookify/models/book_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:http/http.dart' as http;
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
-import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
 

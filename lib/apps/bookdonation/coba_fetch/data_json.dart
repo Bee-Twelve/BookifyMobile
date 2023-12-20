@@ -4,6 +4,8 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class BookDonationScreen extends StatefulWidget {
+  const BookDonationScreen({super.key});
+
   @override
   _BookDonationScreenState createState() => _BookDonationScreenState();
 }
@@ -41,13 +43,13 @@ class _BookDonationScreenState extends State<BookDonationScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Book Donation'),
+        title: const Text('Book Donation'),
       ),
       body: FutureBuilder<List<Book>>(
         future: fetchBooks(''), // Masukkan query yang sesuai jika diperlukan
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return CircularProgressIndicator();
+            return const CircularProgressIndicator();
           } else if (snapshot.hasError) {
             return Text('Error: ${snapshot.error}');
           } else {

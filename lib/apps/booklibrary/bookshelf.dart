@@ -1,6 +1,4 @@
-import 'package:bookify/main.dart';
 import 'package:flutter/material.dart';
-import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/bookshelf_model.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';

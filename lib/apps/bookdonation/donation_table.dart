@@ -4,16 +4,18 @@ import 'package:bookify/apps/bookdonation/model/donation_model.dart';
 import 'package:flutter/material.dart';
 
 class DonationTable extends StatelessWidget {
+  const DonationTable({super.key});
+
   @override
   Widget build(BuildContext context) {
     List<Donation> donations = DonationDatabase.getDonations();
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Donation Table'),
+        title: const Text('Donation Table'),
       ),
       body: DataTable(
-        columns: [
+        columns: const [
           DataColumn(label: Text('Book Title')),
           DataColumn(label: Text('Number of Books')),
           DataColumn(label: Text('Receipt Number')),

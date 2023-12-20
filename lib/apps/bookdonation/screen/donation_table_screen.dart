@@ -1,12 +1,8 @@
 import 'package:bookify/apps/bookdonation/bookdonation.dart';
 import 'package:bookify/apps/bookdonation/donation_table.dart';
-import 'package:bookify/apps/bookdonation/model/donation_database.dart';
-import 'package:bookify/apps/bookdonation/model/donation_model.dart';
 import 'package:bookify/apps/booklibrary/booklibrary.dart';
 import 'package:bookify/shared/shared.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 
 class DonationTableScreen extends StatefulWidget {
   const DonationTableScreen({super.key});
@@ -22,11 +18,11 @@ class _BookLibraryState extends State<DonationTableScreen> {
   // TODO: ATUR PERGANTIAN PAGES, ARAHKAN KE WIDGET KALIAN MASING2
   final List<Widget> _widgetOptions = [
     const Text('BookReview Tab Content'),
-    Bookdonation(),
+    const Bookdonation(),
     const BookLibrary(),
     const Text('BookCommunity Tab Content'),
     const Text('BookMark Tab Content'),
-    DonationTable(),
+    const DonationTable(),
     // other tabs content
   ];
   // * =============

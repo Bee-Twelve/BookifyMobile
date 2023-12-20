@@ -1,18 +1,12 @@
 import 'package:bookify/apps/bookdonation/model/donation_database.dart';
 import 'package:bookify/apps/bookdonation/model/donation_model.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'utils.dart';
-import 'package:bookify/apps/bookdonation/model/donation_database.dart';
-import 'package:bookify/apps/bookdonation/model/donation_model.dart';
-import 'package:flutter/material.dart';
-import 'package:bookify/apps/bookdonation/model/donation_database.dart';
-import 'package:bookify/apps/bookdonation/model/donation_model.dart';
-import 'package:flutter/material.dart';
 
 class StatusDonasi extends StatelessWidget {
+  const StatusDonasi({super.key});
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 415;
@@ -45,12 +39,12 @@ class DonationCard extends StatelessWidget {
   final int index;
 
   const DonationCard({
-    Key? key,
+    super.key,
     required this.donation,
     required this.fem,
     required this.ffem,
     required this.index,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -67,9 +61,9 @@ class DonationCard extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(21 * fem, 21 * fem, 15 * fem, 9 * fem),
       width: double.infinity,
       decoration: BoxDecoration(
-        border: Border.all(color: Color(0x00ffffff)),
+        border: Border.all(color: const Color(0x00ffffff)),
         borderRadius: BorderRadius.circular(20 * fem),
-        gradient: LinearGradient(
+        gradient: const LinearGradient(
           begin: Alignment(0, -1),
           end: Alignment(0, 1),
           colors: <Color>[Color(0xff4575a7), Color(0xff49beb2)],
@@ -95,7 +89,7 @@ class DonationCard extends StatelessWidget {
                       fontSize: 25 * ffem,
                       fontWeight: FontWeight.w400,
                       height: 1.2125 * ffem / fem,
-                      color: Color(0xffffffff),
+                      color: const Color(0xffffffff),
                     ),
                   ),
                 ),
@@ -107,7 +101,7 @@ class DonationCard extends StatelessWidget {
                       height: 20 * fem,
                       margin: EdgeInsets.only(bottom: 8 * fem),
                       decoration: BoxDecoration(
-                        color: Color(0xffa84747),
+                        color: const Color(0xffa84747),
                         borderRadius: BorderRadius.circular(10 * fem),
                       ),
                       child: Center(
@@ -118,7 +112,7 @@ class DonationCard extends StatelessWidget {
                             fontSize: 12 * ffem,
                             fontWeight: FontWeight.w400,
                             height: 1.2125 * ffem / fem,
-                            color: Color(0xffffffff),
+                            color: const Color(0xffffffff),
                           ),
                         ),
                       ),
@@ -142,7 +136,7 @@ class DonationCard extends StatelessWidget {
                                   decoration: BoxDecoration(
                                     borderRadius:
                                         BorderRadius.circular(10 * fem),
-                                    color: Color(0xff1f660e),
+                                    color: const Color(0xff1f660e),
                                   ),
                                 ),
                               ),
@@ -162,7 +156,7 @@ class DonationCard extends StatelessWidget {
                                     fontSize: 12 * ffem,
                                     fontWeight: FontWeight.w400,
                                     height: 1.2125 * ffem / fem,
-                                    color: Color(0xffffffff),
+                                    color: const Color(0xffffffff),
                                   ),
                                 ),
                               ),
@@ -195,7 +189,7 @@ class DonationCard extends StatelessWidget {
                       fontSize: 35 * ffem,
                       fontWeight: FontWeight.w900,
                       height: 1.2125 * ffem / fem,
-                      color: Color(0xffffffff),
+                      color: const Color(0xffffffff),
                     ),
                   ),
                 ),
@@ -211,7 +205,7 @@ class DonationCard extends StatelessWidget {
                 fontSize: 25 * ffem,
                 fontWeight: FontWeight.w400,
                 height: 1.2125 * ffem / fem,
-                color: Color(0xffe74c3c), // Red color
+                color: const Color(0xffe74c3c), // Red color
               ),
             ),
           ),

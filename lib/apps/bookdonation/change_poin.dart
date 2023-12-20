@@ -1,7 +1,5 @@
 import 'package:bookify/apps/bookdonation/change_poin2.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
 import 'utils.dart';
 
@@ -15,13 +13,15 @@ void showChangePoin2(BuildContext context) {
         ),
         elevation: 0.0,
         backgroundColor: Colors.transparent,
-        child: ChangePoin2(),
+        child: const ChangePoin2(),
       );
     },
   );
 }
 
 class ChangePoin extends StatelessWidget {
+  const ChangePoin({super.key});
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 425;
@@ -37,7 +37,7 @@ class ChangePoin extends StatelessWidget {
         // changepointe2h (517:66)
         padding: EdgeInsets.fromLTRB(18 * fem, 175 * fem, 17 * fem, 147 * fem),
         width: double.infinity,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
         child: Column(
@@ -50,7 +50,7 @@ class ChangePoin extends StatelessWidget {
               width: double.infinity,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(40 * fem),
-                gradient: LinearGradient(
+                gradient: const LinearGradient(
                   begin: Alignment(0, -1),
                   end: Alignment(0, 1),
                   colors: <Color>[Color(0xff4b6ba8), Color(0xff20b8a2)],
@@ -80,7 +80,7 @@ class ChangePoin extends StatelessWidget {
                         width: 21.78 * fem,
                         height: 16.68 * fem,
                         alignment: Alignment.center,
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                           color: Colors.transparent,
                         ),
                         child: Text(
@@ -117,7 +117,7 @@ class ChangePoin extends StatelessWidget {
                                   fontSize: 24 * ffem,
                                   fontWeight: FontWeight.w900,
                                   height: 1.2125 * ffem / fem,
-                                  color: Color(0xffffffff),
+                                  color: const Color(0xffffffff),
                                 ),
                               ),
                             ),
@@ -139,7 +139,7 @@ class ChangePoin extends StatelessWidget {
                                   fontSize: 24 * ffem,
                                   fontWeight: FontWeight.w900,
                                   height: 1.2125 * ffem / fem,
-                                  color: Color(0xffffffff),
+                                  color: const Color(0xffffffff),
                                 ),
                               ),
                             ),
@@ -160,7 +160,7 @@ class ChangePoin extends StatelessWidget {
                         fontSize: 24 * ffem,
                         fontWeight: FontWeight.w900,
                         height: 1.2125 * ffem / fem,
-                        color: Color(0xffffffff),
+                        color: const Color(0xffffffff),
                       ),
                     ),
                   ),
@@ -194,7 +194,7 @@ class ChangePoin extends StatelessWidget {
                                     decoration: BoxDecoration(
                                       borderRadius:
                                           BorderRadius.circular(10 * fem),
-                                      color: Color(0xfffff73a),
+                                      color: const Color(0xfffff73a),
                                     ),
                                   ),
                                 ),
@@ -215,7 +215,7 @@ class ChangePoin extends StatelessWidget {
                                       fontSize: 20 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.2125 * ffem / fem,
-                                      color: Color(0xff000000),
+                                      color: const Color(0xff000000),
                                     ),
                                   ),
                                 ),
@@ -238,7 +238,7 @@ class ChangePoin extends StatelessWidget {
                         fontSize: 24 * ffem,
                         fontWeight: FontWeight.w900,
                         height: 1.2125 * ffem / fem,
-                        color: Color(0xffffffff),
+                        color: const Color(0xffffffff),
                       ),
                     ),
                   ),

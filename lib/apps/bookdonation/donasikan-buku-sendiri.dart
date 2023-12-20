@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class DonasiBukuSendiri extends StatelessWidget {
+  const DonasiBukuSendiri({super.key});
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 600;
@@ -15,7 +17,7 @@ class DonasiBukuSendiri extends StatelessWidget {
     TextEditingController receiptNumberController = TextEditingController();
 
     return SingleChildScrollView(
-      child: Container(
+      child: SizedBox(
         width: double.infinity,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
@@ -37,7 +39,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                       height: 505 * fem,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(20 * fem),
-                        gradient: LinearGradient(
+                        gradient: const LinearGradient(
                           begin: Alignment(0, -1),
                           end: Alignment(0, 1),
                           colors: <Color>[Color(0xff496fa8), Color(0xff20b8a2)],
@@ -54,7 +56,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xffffffff),
+                                color: const Color(0xffffffff),
                               ),
                             ),
                           ),
@@ -64,7 +66,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                             height: 67 * fem,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(10 * fem),
-                              color: Color(0xff88b0be),
+                              color: const Color(0xff88b0be),
                             ),
                             child: TextField(
                               controller: bookTitleController,
@@ -76,7 +78,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                 hintText: 'Enter Book Title',
                                 hintStyle: TextStyle(
                                     fontSize: 20 * ffem,
-                                    color: Color.fromARGB(255, 111, 103,
+                                    color: const Color.fromARGB(255, 111, 103,
                                         103)), // Atur ukuran dan warna teks petunjuk
                                 contentPadding: EdgeInsets.all(20 * fem),
                                 border: InputBorder.none,
@@ -90,7 +92,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xffffffff),
+                                color: const Color(0xffffffff),
                               ),
                             ),
                           ),
@@ -101,7 +103,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   15 * fem), // Sesuaikan dengan kebutuhan
-                              color: Color(0xff88b0be),
+                              color: const Color(0xff88b0be),
                             ),
                             child: TextField(
                               controller: numberOfBooksController,
@@ -113,7 +115,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                 hintText: 'Enter Number of books',
                                 hintStyle: TextStyle(
                                   fontSize: 20 * ffem,
-                                  color: Color.fromARGB(255, 111, 103, 103),
+                                  color: const Color.fromARGB(255, 111, 103, 103),
                                 ),
                                 contentPadding: EdgeInsets.all(20 * fem),
                                 border: InputBorder.none,
@@ -127,7 +129,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                               style: GoogleFonts.inter(
                                 fontSize: 20 * ffem,
                                 fontWeight: FontWeight.w600,
-                                color: Color(0xffffffff),
+                                color: const Color(0xffffffff),
                               ),
                             ),
                           ),
@@ -138,7 +140,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(
                                   15 * fem), // Sesuaikan dengan kebutuhan
-                              color: Color(0xff88b0be),
+                              color: const Color(0xff88b0be),
                             ),
                             child: TextField(
                               controller: receiptNumberController,
@@ -150,7 +152,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                 hintText: 'Enter Receipt Number',
                                 hintStyle: TextStyle(
                                   fontSize: 20 * ffem,
-                                  color: Color.fromARGB(255, 111, 103, 103),
+                                  color: const Color.fromARGB(255, 111, 103, 103),
                                 ),
                                 contentPadding: EdgeInsets.all(20 * fem),
                                 border: InputBorder.none,
@@ -182,7 +184,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                   context: context,
                                   builder: (BuildContext context) {
                                     return AlertDialog(
-                                      title: Text('Donation Information'),
+                                      title: const Text('Donation Information'),
                                       content: Column(
                                         crossAxisAlignment:
                                             CrossAxisAlignment.start,
@@ -203,7 +205,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                             Navigator.pop(
                                                 context); // Close the donation screen
                                           },
-                                          child: Text('OK'),
+                                          child: const Text('OK'),
                                         ),
                                       ],
                                     );
@@ -217,7 +219,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                 width: 304 * fem,
                                 height: 28 * fem,
                                 decoration: BoxDecoration(
-                                  color: Color(0xfffff73a),
+                                  color: const Color(0xfffff73a),
                                   borderRadius: BorderRadius.circular(10 * fem),
                                 ),
                                 child: Center(
@@ -226,7 +228,7 @@ class DonasiBukuSendiri extends StatelessWidget {
                                     style: GoogleFonts.inter(
                                       fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
-                                      color: Color(0xff000000),
+                                      color: const Color(0xff000000),
                                     ),
                                   ),
                                 ),

@@ -1,6 +1,5 @@
 import 'dart:convert';
 
-import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
@@ -75,14 +74,14 @@ class _AddForumPageState extends State<AddForumPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Alert'),
+        title: const Text('Alert'),
         content: Text(message),
         actions: [
           TextButton(
             onPressed: () {
               Navigator.of(context).pop(); // Dismiss only the AlertDialog
             },
-            child: Text('OK'),
+            child: const Text('OK'),
           ),
         ],
       ),
@@ -93,7 +92,7 @@ class _AddForumPageState extends State<AddForumPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Add Forum'),
+        title: const Text('Add Forum'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -118,7 +117,7 @@ class _AddForumPageState extends State<AddForumPage> {
               ),
               TextFormField(
                 controller: _subjectController,
-                decoration: InputDecoration(labelText: 'Subject'),
+                decoration: const InputDecoration(labelText: 'Subject'),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a subject';
@@ -128,7 +127,7 @@ class _AddForumPageState extends State<AddForumPage> {
               ),
               TextFormField(
                 controller: _descriptionController,
-                decoration: InputDecoration(labelText: 'Description'),
+                decoration: const InputDecoration(labelText: 'Description'),
                 maxLines: null, // Makes it multiline
                 keyboardType: TextInputType.multiline,
                 validator: (value) {
@@ -138,7 +137,7 @@ class _AddForumPageState extends State<AddForumPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () async {
                   bool added = await _addForum();
@@ -146,7 +145,7 @@ class _AddForumPageState extends State<AddForumPage> {
                     Navigator.pop(context, true);
                   }
                 },
-                child: Text('Add Forum'),
+                child: const Text('Add Forum'),
               ),
             ],
           ),

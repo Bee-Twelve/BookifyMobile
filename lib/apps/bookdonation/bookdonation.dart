@@ -3,7 +3,6 @@ import 'package:bookify/apps/bookdonation/change_poin.dart';
 import 'package:bookify/apps/bookdonation/donasi-dari-library.dart';
 import 'package:bookify/apps/bookdonation/donasikan-buku-sendiri.dart';
 import 'package:bookify/apps/bookdonation/screen/donation_table_screen.dart';
-import 'package:bookify/apps/bookdonation/status-buku-yang-didonasikan.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 import 'utils.dart';
@@ -18,7 +17,7 @@ void showDonasiBukuSendiriDialog(BuildContext context) {
         ),
         elevation: 0.0,
         backgroundColor: Colors.transparent,
-        child: DonasiBukuSendiri(),
+        child: const DonasiBukuSendiri(),
       );
     },
   );
@@ -35,13 +34,15 @@ void showchangepoin(BuildContext context) {
         ),
         elevation: 0.0,
         backgroundColor: Colors.transparent,
-        child: ChangePoin(), // Your ChangePoin widget
+        child: const ChangePoin(), // Your ChangePoin widget
       );
     },
   );
 }
 
 class Bookdonation extends StatelessWidget {
+  const Bookdonation({super.key});
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 450;
@@ -61,7 +62,7 @@ class Bookdonation extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
-                  Container(
+                  SizedBox(
                     width: double.infinity,
                     height: 167 * fem,
                     child: Stack(
@@ -76,8 +77,8 @@ class Bookdonation extends StatelessWidget {
                               child: Container(
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(20 * fem),
-                                  border: Border.all(color: Color(0x00ffffff)),
-                                  gradient: LinearGradient(
+                                  border: Border.all(color: const Color(0x00ffffff)),
+                                  gradient: const LinearGradient(
                                     begin: Alignment(0, -1),
                                     end: Alignment(0, 1),
                                     colors: <Color>[
@@ -105,7 +106,7 @@ class Bookdonation extends StatelessWidget {
                                   fontSize: 20 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.2125 * ffem / fem,
-                                  color: Color(0xffffffff),
+                                  color: const Color(0xffffffff),
                                 ),
                               ),
                             ),
@@ -125,7 +126,7 @@ class Bookdonation extends StatelessWidget {
                                   fontSize: 15 * ffem,
                                   fontWeight: FontWeight.w600,
                                   height: 1.2125 * ffem / fem,
-                                  color: Color(0xffffffff),
+                                  color: const Color(0xffffffff),
                                 ),
                               ),
                             ),
@@ -170,9 +171,9 @@ class Bookdonation extends StatelessWidget {
                                 width: 165 * fem,
                                 height: double.infinity,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0x00ffffff)),
+                                  border: Border.all(color: const Color(0x00ffffff)),
                                   borderRadius: BorderRadius.circular(20 * fem),
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     begin: Alignment(0, -1),
                                     end: Alignment(0, 1),
                                     colors: <Color>[
@@ -188,7 +189,7 @@ class Bookdonation extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            DonationTableScreen(),
+                                            const DonationTableScreen(),
                                       ),
                                     );
                                   },
@@ -214,7 +215,7 @@ class Bookdonation extends StatelessWidget {
                                           fontSize: 12 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.2125 * ffem / fem,
-                                          color: Color(0xffffffff),
+                                          color: const Color(0xffffffff),
                                         ),
                                       ),
                                     ],
@@ -227,9 +228,9 @@ class Bookdonation extends StatelessWidget {
                                 width: 165 * fem,
                                 height: double.infinity,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0x00ffffff)),
+                                  border: Border.all(color: const Color(0x00ffffff)),
                                   borderRadius: BorderRadius.circular(20 * fem),
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     begin: Alignment(0, -1),
                                     end: Alignment(0, 1),
                                     colors: <Color>[
@@ -257,8 +258,8 @@ class Bookdonation extends StatelessWidget {
                                           borderRadius:
                                               BorderRadius.circular(20 * fem),
                                           border: Border.all(
-                                              color: Color(0x00ffffff)),
-                                          image: DecorationImage(
+                                              color: const Color(0x00ffffff)),
+                                          image: const DecorationImage(
                                             fit: BoxFit.cover,
                                             image: AssetImage(
                                               'assets/ui-desain/images/rectangle-6-bg.png',
@@ -274,7 +275,7 @@ class Bookdonation extends StatelessWidget {
                                           fontSize: 12 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.2125 * ffem / fem,
-                                          color: Color(0xffffffff),
+                                          color: const Color(0xffffffff),
                                         ),
                                       ),
                                     ],
@@ -300,9 +301,9 @@ class Bookdonation extends StatelessWidget {
                                 width: 165 * fem,
                                 height: double.infinity,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0x00ffffff)),
+                                  border: Border.all(color: const Color(0x00ffffff)),
                                   borderRadius: BorderRadius.circular(20 * fem),
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     begin: Alignment(0, -1),
                                     end: Alignment(0, 1),
                                     colors: <Color>[
@@ -318,7 +319,7 @@ class Bookdonation extends StatelessWidget {
                                       context,
                                       MaterialPageRoute(
                                         builder: (context) =>
-                                            DonasiDariLibrary(),
+                                            const DonasiDariLibrary(),
                                       ),
                                     );
                                   },
@@ -344,7 +345,7 @@ class Bookdonation extends StatelessWidget {
                                           fontSize: 12 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.2125 * ffem / fem,
-                                          color: Color(0xffffffff),
+                                          color: const Color(0xffffffff),
                                         ),
                                       ),
                                     ],
@@ -357,9 +358,9 @@ class Bookdonation extends StatelessWidget {
                                 width: 165 * fem,
                                 height: double.infinity,
                                 decoration: BoxDecoration(
-                                  border: Border.all(color: Color(0x00ffffff)),
+                                  border: Border.all(color: const Color(0x00ffffff)),
                                   borderRadius: BorderRadius.circular(20 * fem),
-                                  gradient: LinearGradient(
+                                  gradient: const LinearGradient(
                                     begin: Alignment(0, -1),
                                     end: Alignment(0, 1),
                                     colors: <Color>[
@@ -395,7 +396,7 @@ class Bookdonation extends StatelessWidget {
                                           fontSize: 12 * ffem,
                                           fontWeight: FontWeight.w600,
                                           height: 1.2125 * ffem / fem,
-                                          color: Color(0xffffffff),
+                                          color: const Color(0xffffffff),
                                         ),
                                       ),
                                     ],

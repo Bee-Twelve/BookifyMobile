@@ -1,5 +1,4 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
-import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';

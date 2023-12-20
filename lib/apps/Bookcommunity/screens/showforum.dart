@@ -8,7 +8,7 @@ import 'addforum.dart';
 import 'forumexpanded.dart';
 
 class ProductPage extends StatefulWidget {
-  const ProductPage({Key? key}) : super(key: key);
+  const ProductPage({super.key});
 
   @override
   _ProductPageState createState() => _ProductPageState();
@@ -50,7 +50,7 @@ class _ProductPageState extends State<ProductPage> {
             color: Colors.grey.withOpacity(0.5),
             spreadRadius: 2,
             blurRadius: 4,
-            offset: Offset(0, 3),
+            offset: const Offset(0, 3),
           ),
         ],
       ),
@@ -59,7 +59,7 @@ class _ProductPageState extends State<ProductPage> {
         children: [
           Text(
             'Total Forums: $count',
-            style: TextStyle(
+            style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.bold,
             ),
@@ -68,7 +68,7 @@ class _ProductPageState extends State<ProductPage> {
           ElevatedButton.icon(
             onPressed: () async {
               final bool added = await Navigator.of(context).push(
-                    MaterialPageRoute(builder: (context) => AddForumPage()),
+                    MaterialPageRoute(builder: (context) => const AddForumPage()),
                   ) ??
                   false;
               if (added) {
@@ -77,10 +77,10 @@ class _ProductPageState extends State<ProductPage> {
                 });
               }
             },
-            icon: Icon(Icons.add),
-            label: Text('Add Forum'),
+            icon: const Icon(Icons.add),
+            label: const Text('Add Forum'),
             style: ElevatedButton.styleFrom(
-              primary: Colors.blue,
+              backgroundColor: Colors.blue,
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(8),
               ),
@@ -166,7 +166,7 @@ class _ProductPageState extends State<ProductPage> {
                                           overflow: TextOverflow.ellipsis,
                                         ),
                                         Text(
-                                          "${forum.fields.subject}",
+                                          forum.fields.subject,
                                           style: const TextStyle(fontSize: 16),
                                           maxLines: 2,
                                           overflow: TextOverflow.ellipsis,

@@ -1,14 +1,11 @@
-import 'package:bookify/apps/bookdonation/model/donation_database.dart';
-import 'package:bookify/apps/bookdonation/model/donation_model.dart';
 import 'package:bookify/apps/bookdonation/utils.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:bookify/apps/bookdonation/model/donation_database.dart';
-import 'package:bookify/apps/bookdonation/model/donation_model.dart';
-import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ChangePoin2 extends StatelessWidget {
+  const ChangePoin2({super.key});
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 600;
@@ -28,7 +25,7 @@ class ChangePoin2 extends StatelessWidget {
         context: context,
         builder: (BuildContext context) {
           return AlertDialog(
-            title: Text('Penukaran Poin'),
+            title: const Text('Penukaran Poin'),
             content: Text('Kamu telah menukarkan $userInput poin.'),
             actions: [
               TextButton(
@@ -41,7 +38,7 @@ class ChangePoin2 extends StatelessWidget {
                   Navigator.pop(context); // Close the screen or dialog
                   Navigator.pop(context);
                 },
-                child: Text('OK'),
+                child: const Text('OK'),
               ),
             ],
           );
@@ -58,7 +55,7 @@ class ChangePoin2 extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(25 * fem, 339 * fem, 19 * fem, 315 * fem),
         width: double.infinity,
         height: 852 * fem,
-        decoration: BoxDecoration(
+        decoration: const BoxDecoration(
           color: Colors.transparent,
         ),
         child: Container(
@@ -69,7 +66,7 @@ class ChangePoin2 extends StatelessWidget {
           height: double.infinity,
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(40 * fem),
-            gradient: LinearGradient(
+            gradient: const LinearGradient(
               begin: Alignment(0, -1),
               end: Alignment(0, 1),
               colors: <Color>[Color(0xff20b8a2), Color(0xff496fa8)],
@@ -77,7 +74,7 @@ class ChangePoin2 extends StatelessWidget {
             ),
             boxShadow: [
               BoxShadow(
-                color: Color(0x3f000000),
+                color: const Color(0x3f000000),
                 offset: Offset(0 * fem, 20 * fem),
                 blurRadius: 12.5 * fem,
               ),
@@ -108,7 +105,7 @@ class ChangePoin2 extends StatelessWidget {
                           fontSize: 20 * ffem,
                           fontWeight: FontWeight.w600,
                           height: 1.2125 * ffem / fem,
-                          color: Color(0xffffffff),
+                          color: const Color(0xffffffff),
                         ),
                       ),
                     ),
@@ -119,7 +116,7 @@ class ChangePoin2 extends StatelessWidget {
                         // Close the dialog when the "X" button is pressed
                         Navigator.pop(context);
                       },
-                      child: Container(
+                      child: SizedBox(
                         width: 21.78 * fem,
                         height: 21.78 * fem,
                         child: Text(
@@ -146,7 +143,7 @@ class ChangePoin2 extends StatelessWidget {
                 height: 40 * fem,
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(30 * fem),
-                  color: Color(0xff88b0be),
+                  color: const Color(0xff88b0be),
                 ),
                 child: TextField(
                   controller: poinYangInginDitukar,
@@ -154,7 +151,7 @@ class ChangePoin2 extends StatelessWidget {
                   decoration: InputDecoration(
                     hintText: 'Masukkan total coin yang ingin ditukarkan',
                     hintStyle: TextStyle(
-                      color: Color.fromARGB(255, 107, 99, 99),
+                      color: const Color.fromARGB(255, 107, 99, 99),
                       fontSize: 17 * ffem,
                     ),
                     border: InputBorder.none,
@@ -185,7 +182,7 @@ class ChangePoin2 extends StatelessWidget {
                           style: TextButton.styleFrom(
                             padding: EdgeInsets.zero,
                           ),
-                          child: Container(
+                          child: SizedBox(
                             width: 108 * fem,
                             height: double.infinity,
                             child: TextButton(
@@ -198,7 +195,7 @@ class ChangePoin2 extends StatelessWidget {
                               ),
                               child: Container(
                                 decoration: BoxDecoration(
-                                  color: Color(0xff4772a8),
+                                  color: const Color(0xff4772a8),
                                   borderRadius: BorderRadius.circular(10 * fem),
                                 ),
                                 child: Center(
@@ -210,7 +207,7 @@ class ChangePoin2 extends StatelessWidget {
                                       fontSize: 15 * ffem,
                                       fontWeight: FontWeight.w400,
                                       height: 1.2125 * ffem / fem,
-                                      color: Color(0xffffffff),
+                                      color: const Color(0xffffffff),
                                     ),
                                   ),
                                 ),
@@ -231,7 +228,7 @@ class ChangePoin2 extends StatelessWidget {
                         width: 116 * fem,
                         height: 26.78 * fem,
                         decoration: BoxDecoration(
-                          color: Color(0xfffff73a),
+                          color: const Color(0xfffff73a),
                           borderRadius: BorderRadius.circular(10 * fem),
                         ),
                         child: Center(
@@ -241,7 +238,7 @@ class ChangePoin2 extends StatelessWidget {
                               fontSize: 15 * ffem,
                               fontWeight: FontWeight.w400,
                               height: 1.2125 * ffem / fem,
-                              color: Color(0xff000000),
+                              color: const Color(0xff000000),
                             ),
                           ),
                         ),

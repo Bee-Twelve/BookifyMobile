@@ -11,7 +11,7 @@ import '../model/Discussion.dart';
 class ForumDetailPage extends StatefulWidget {
   final Forum forum;
 
-  ForumDetailPage({Key? key, required this.forum}) : super(key: key);
+  const ForumDetailPage({super.key, required this.forum});
 
   @override
   _ForumDetailPageState createState() => _ForumDetailPageState();
@@ -36,7 +36,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
 
     // Convert cookies map to cookie header string
     var cookies = cookieRequest.cookies;
-    if (cookies != null && cookies.isNotEmpty) {
+    if (cookies.isNotEmpty) {
       headers['Cookie'] =
           cookies.entries.map((e) => '${e.key}=${e.value.value}').join('; ');
     }
@@ -64,11 +64,11 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Alert'),
+        title: const Text('Alert'),
         content: Text(message),
         actions: [
           TextButton(
-            child: Text('OK'),
+            child: const Text('OK'),
             onPressed: () {
               Navigator.of(context).pop(); // Dismiss the AlertDialog
               Navigator.of(context)
@@ -93,29 +93,29 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
   }
 
   void _showAddDiscussionDialog(BuildContext context) {
-    final TextEditingController _discussionController = TextEditingController();
+    final TextEditingController discussionController = TextEditingController();
 
     showDialog(
       context: context,
       builder: (context) {
         return AlertDialog(
-          title: Text('Add Discussion'),
+          title: const Text('Add Discussion'),
           content: TextField(
-            controller: _discussionController,
-            decoration: InputDecoration(hintText: "Enter your discussion here"),
+            controller: discussionController,
+            decoration: const InputDecoration(hintText: "Enter your discussion here"),
           ),
           actions: <Widget>[
             TextButton(
-              child: Text('Cancel'),
+              child: const Text('Cancel'),
               onPressed: () {
                 Navigator.of(context).pop();
               },
             ),
             TextButton(
-              child: Text('Add'),
+              child: const Text('Add'),
               onPressed: () {
                 _addDiscussion(
-                    context, widget.forum.pk, _discussionController.text);
+                    context, widget.forum.pk, discussionController.text);
                 Navigator.of(context).pop();
               },
             ),
@@ -149,11 +149,11 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
     showDialog(
       context: context,
       builder: (context) => AlertDialog(
-        title: Text('Alert'),
+        title: const Text('Alert'),
         content: Text(message),
         actions: [
           TextButton(
-              child: Text('OK'), onPressed: () => Navigator.pop(context)),
+              child: const Text('OK'), onPressed: () => Navigator.pop(context)),
         ],
       ),
     );
@@ -166,7 +166,7 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
         title: Text(widget.forum.fields.book),
         actions: [
           IconButton(
-            icon: Icon(Icons.delete),
+            icon: const Icon(Icons.delete),
             onPressed: _deleteForum,
             tooltip: 'Delete Forum',
           ),
@@ -190,30 +190,30 @@ class _ForumDetailPageState extends State<ForumDetailPage> {
                     color: Colors.grey.withOpacity(0.5),
                     spreadRadius: 2,
                     blurRadius: 4,
-                    offset: Offset(0, 3),
+                    offset: const Offset(0, 3),
                   ),
                 ],
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text("${widget.forum.fields.subject}",
+                  Text(widget.forum.fields.subject,
                       style: const TextStyle(
                           fontSize: 25,
                           color: Colors.lightBlueAccent,
                           fontWeight: FontWeight.bold)),
-                  SizedBox(height: 3),
-                  Text("${widget.forum.fields.description}",
-                      style: TextStyle(fontSize: 18)),
-                  SizedBox(height: 10),
+                  const SizedBox(height: 3),
+                  Text(widget.forum.fields.description,
+                      style: const TextStyle(fontSize: 18)),
+                  const SizedBox(height: 10),
                   Text(
                       "by: ${widget.forum.fields.user} on ${widget.forum.fields.dateCreated}",
-                      style: TextStyle(fontSize: 12)),
+                      style: const TextStyle(fontSize: 12)),
                 ],
               ),
             ),
             // Discussions title
-            Text("Discussions:",
+            const Text("Discussions:",
                 style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
             // Discussion list
             Expanded(

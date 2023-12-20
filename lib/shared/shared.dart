@@ -1,8 +1,4 @@
-import 'package:bookify/apps/bookfavorite/bookfavorite.dart';
 import 'package:bookify/apps/bookreviewdetail/bookreviewdetail.dart';
-import 'package:bookify/models/bookfavorite_model.dart';
-import 'package:bookify/models/models.dart';
-import 'package:bookify/utils/provider_class.dart';
 import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';

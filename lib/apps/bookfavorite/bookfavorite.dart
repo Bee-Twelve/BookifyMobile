@@ -1,10 +1,7 @@
 import 'package:bookify/apps/bookreviewdetail/bookreviewdetail.dart';
 import 'package:flutter/material.dart';
-import 'package:bookify/utils/book_service.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 // import 'package:bookify/models/book_model.dart';
-import 'package:http/http.dart' as http;
-import 'dart:convert';
 import 'package:bookify/models/bookfavorite_model.dart';
 // import 'package:bookify/shared/shared.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';

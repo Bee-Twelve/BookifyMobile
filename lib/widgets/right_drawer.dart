@@ -87,7 +87,7 @@ class RightDrawer extends StatelessWidget {
             onTap: () async {
               final response = await request.logout(
                   // TODO: Ganti URL dan jangan lupa tambahkan trailing slash (/) di akhir URL!
-                  "/auth/logout/");
+                  "/authentication/logout/");
               String message = response["message"];
               if (response['status']) {
                 String uname = response["username"];

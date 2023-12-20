@@ -2,6 +2,7 @@ import 'package:bookify/screens/home.dart';
 import 'package:flutter/material.dart';
 import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 void main() {
   runApp(const LoginApp());
@@ -104,6 +105,8 @@ class _LoginPageState extends State<LoginPage> {
                           40), // Space between the password field and the login button
                   ElevatedButton(
                     onPressed: () async {
+                      SharedPreferences prefs =
+                          await SharedPreferences.getInstance();
                       String username = _usernameController.text;
                       String password = _passwordController.text;
 
@@ -119,16 +122,20 @@ class _LoginPageState extends State<LoginPage> {
                       if (request.loggedIn) {
                         String message = response['message'];
                         String uname = response['username'];
+                        prefs.setString('username', uname);
+                        // ignore: use_build_context_synchronously
                         Navigator.pushReplacement(
                           context,
                           MaterialPageRoute(builder: (context) => const Home()),
                         );
+                        // ignore: use_build_context_synchronously
                         ScaffoldMessenger.of(context)
                           ..hideCurrentSnackBar()
                           ..showSnackBar(SnackBar(
                               content:
                                   Text("$message Selamat datang, $uname.")));
                       } else {
+                        // ignore: use_build_context_synchronously
                         showDialog(
                           context: context,
                           builder: (context) => AlertDialog(

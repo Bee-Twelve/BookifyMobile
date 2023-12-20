@@ -1,4 +1,5 @@
 import 'package:bookify/apps/Bookcommunity/screens/showforum.dart';
+import 'package:bookify/apps/bookfavorite/bookfavorite.dart';
 import 'package:bookify/apps/booklibrary/bookshelf.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/shared/shared.dart';
@@ -18,6 +19,15 @@ class _BookLibraryState extends State<Home> {
   String _selectedModule = "Book Library";
   String _username = "";
 
+  @override
+  void initState() {
+    super.initState();
+    // fetchData();
+    loadUsername();
+
+    // booksFuture = loadMockBooksData();
+  }
+
   // * = VARIABLES =
   // TODO: ATUR PERGANTIAN PAGES, ARAHKAN KE WIDGET KALIAN MASING2
   final List<Widget> _widgetOptions = [
@@ -27,6 +37,7 @@ class _BookLibraryState extends State<Home> {
     const ProductPage(),
     const Text('BookMark Tab Content'),
     const BookshelfPage(),
+    const BookFavorite(),
     // other tabs content
   ];
   // * =============
@@ -65,32 +76,30 @@ class _BookLibraryState extends State<Home> {
     if (filterName == 'Booklibrary') {
       setState(() {
         _selectedIndex = 2;
+        _selectedModule = "Book Library";
       });
     } else if (filterName == 'Bookshelf') {
       setState(() {
         _selectedIndex = 5;
+        _selectedModule = "Book Library";
+      });
+    } else if (filterName == 'Book Favorite') {
+      setState(() {
+        _selectedIndex = 6;
+        _selectedModule = "Book Review & Favorite";
       });
     }
   }
 
-  // * =============
   Future<void> loadUsername() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     final uname = prefs.getString('username') ?? '';
-    print(uname);
     setState(() {
       _username = uname;
     });
   }
 
-  @override
-  void initState() {
-    super.initState();
-    // fetchData();
-    loadUsername();
-
-    // booksFuture = loadMockBooksData();
-  }
+  // * =============
 
   // * === MAIN WIDGETS ===
   @override

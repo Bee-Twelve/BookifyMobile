@@ -1,9 +1,13 @@
 import 'package:bookify/apps/bookreviewdetail/bookreviewdetail.dart';
+import 'package:bookify/models/models.dart';
+import 'package:bookify/utils/provider_class.dart';
 import 'package:flutter/material.dart';
 import 'package:bookify/utils/book_service.dart';
 import 'package:bookify/models/book_model.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:http/http.dart' as http;
+import 'package:pbp_django_auth_extended/pbp_django_auth_extended.dart';
+import 'package:provider/provider.dart';
 import 'dart:convert';
 
 import 'package:shared_preferences/shared_preferences.dart';
@@ -23,36 +27,6 @@ class _BookReviewState extends State<BookReview> {
 
   bool favStatus = false;
 
-  // Future<void> fetchData() async {
-  //   final response = await http
-  //       .post(Uri.parse('https://beetwelve.site/bookreview/load-books/'));
-
-  //   if (response.statusCode == 200) {
-  //     final Map<String, dynamic> jsonResponse = json.decode(response.body);
-
-  //     final List<dynamic> booksData = json.decode(jsonResponse["books"]);
-
-  //     final List<Book> books =
-  //         booksData.map((bookData) => Book.fromJson(bookData)).toList();
-  //     print(jsonEncode(booksData));
-  //     setState(() {
-  //       booksFuture = Future.value(books);
-  //     });
-  //   } else {
-  //     // Handle the error
-  //     print('Failed to load books. Status code: ${response.statusCode}');
-  //   }
-  // }
-
-  Future<void> loadUsername() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    final uname = prefs.getString('username') ?? '';
-    print(uname);
-    setState(() {
-      username = uname;
-    });
-  }
-
   @override
   void initState() {
     super.initState();
@@ -63,8 +37,71 @@ class _BookReviewState extends State<BookReview> {
     // booksFuture = loadMockBooksData();
   }
 
-  void showDetailedInfo(
-      BuildContext context, Map<String, dynamic> book, int id) {
+  // * ========== METHODS ==========
+  Future<void> fetchBook(String query) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    final bookDataProvider =
+        Provider.of<BookDataProvider>(context, listen: false);
+
+    var response = [];
+    if (query == '') {
+      response = await request.get('/api/books/fetch-book/');
+    } else {
+      response = await request.get('/api/books/search?q=$query');
+    }
+
+    List<BookDataset> listBook = [];
+    for (var book in response) {
+      if (book != null) {
+        listBook.add(BookDataset.fromJson(book));
+      }
+    }
+
+    bookDataProvider.updateList(listBook);
+    bookDataProvider.setLoading(false);
+  }
+
+  Future<void> loadUsername() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    final uname = prefs.getString('username') ?? '';
+    print(uname);
+    setState(() {
+      username = uname;
+    });
+  }
+
+  Future<void> addFavorite(int bookId) async {
+    final request = Provider.of<CookieRequest>(context, listen: false);
+    String url = '/bookreview/add-favorite-api/$bookId/';
+
+    final response = await request.post(url, {});
+
+    if (response["code"] == 200) {
+      // Handle successful response
+      Fluttertoast.showToast(
+        msg: "Successfully added to favorite list",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.green[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    } else {
+      // Handle error response
+      Fluttertoast.showToast(
+        msg: response["message"] ?? "Failed to add to favorite list",
+        toastLength: Toast.LENGTH_SHORT,
+        gravity: ToastGravity.CENTER,
+        timeInSecForIosWeb: 1,
+        backgroundColor: Colors.red[200],
+        textColor: Colors.white,
+        fontSize: 16.0,
+      );
+    }
+  }
+
+  void showDetailedInfo(BuildContext context, BookDataset book, int id) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -117,7 +154,7 @@ class _BookReviewState extends State<BookReview> {
                       ClipRRect(
                         borderRadius: BorderRadius.circular(
                             6), // Apply border radius here
-                        child: Image.network(book["fields"]["thumbnail"],
+                        child: Image.network(book.fields.thumbnail,
                             width: 100,
                             height: 150,
                             fit: BoxFit
@@ -127,7 +164,7 @@ class _BookReviewState extends State<BookReview> {
                       SizedBox(
                         width: MediaQuery.of(context).size.width * .4,
                         child: Text(
-                          book["fields"]["title"],
+                          book.fields.title,
                           style: const TextStyle(
                             fontSize: 25,
                             fontFamily: 'Inter',
@@ -161,7 +198,7 @@ class _BookReviewState extends State<BookReview> {
                     height: 180,
                     child: SingleChildScrollView(
                       child: Text(
-                        book["fields"]["description"],
+                        book.fields.description,
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -190,7 +227,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        "| ${book["fields"]["publishedYear"]}",
+                        "| ${book.fields.publishedYear}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -212,7 +249,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        ": ${book["fields"]["author"]}",
+                        ": ${book.fields.author}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -234,7 +271,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        ": ${book["fields"]["pages"]}",
+                        ": ${book.fields.pages}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -256,7 +293,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        ": ${book["fields"]["ratings_avg"]}",
+                        ": ${book.fields.ratingsAvg}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -278,7 +315,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        ": ${book["fields"]["ratings_count"]}",
+                        ": ${book.fields.ratingsCount}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -300,7 +337,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        ": ${book["fields"]["isbn10"]}",
+                        ": ${book.fields.isbn10}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -322,7 +359,7 @@ class _BookReviewState extends State<BookReview> {
                         ),
                       ),
                       Text(
-                        ": ${book["fields"]["isbn13"]}",
+                        ": ${book.fields.isbn13}",
                         style: const TextStyle(
                           fontSize: 15,
                           fontFamily: 'Inter',
@@ -340,15 +377,16 @@ class _BookReviewState extends State<BookReview> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
+                      // * ========== BOOKREVIEW BUTTON ==========
                       InkWell(
                         onTap: () {
                           Navigator.of(context).pop();
-                          print(book);
+
                           Navigator.push(
                             context,
                             MaterialPageRoute(
                               builder: (context) => BookReviewDetail(
-                                  id: id, book: book, username: username),
+                                  id: id, bookId: book.pk, username: username),
                             ),
                           );
                         },
@@ -373,99 +411,13 @@ class _BookReviewState extends State<BookReview> {
                           ),
                         ),
                       ),
-                      // InkWell(
-                      //   onTap: () {
-                      //     setState(() {
-                      //       favStatus = !favStatus;
-                      //     });
-                      //     Fluttertoast.showToast(
-                      //         msg:
-                      //             "${book["fields"]["title"]} has been add to your favorite list",
-                      //         toastLength: Toast.LENGTH_SHORT,
-                      //         gravity: ToastGravity.CENTER,
-                      //         timeInSecForIosWeb: 1,
-                      //         backgroundColor: Colors.blue[200],
-                      //         textColor: Colors.black,
-                      //         fontSize: 16.0);
+                      // * ========== BOOKREVIEW BUTTON ==========
 
-                      //     Navigator.pop(context);
-                      //   },
-                      //   child: Container(
-                      //     margin: const EdgeInsets.all(5),
-                      //     height: 20,
-                      //     width: 90,
-                      //     decoration: BoxDecoration(
-                      //       color: favStatus == false
-                      //           ? const Color(0xFFFE9526)
-                      //           : Colors.red,
-                      //       borderRadius: BorderRadius.circular(20),
-                      //     ),
-                      //     child: Center(
-                      //       child: Text(
-                      //         favStatus == false
-                      //             ? 'Add To Fav'
-                      //             : 'Remove from Fav',
-                      //         style: TextStyle(
-                      //           fontSize: 10,
-                      //           fontFamily: 'Inter',
-                      //           fontWeight: FontWeight.normal,
-                      //           color: Colors.white,
-                      //         ),
-                      //       ),
-                      //     ),
-                      //   ),
-                      // )
-
+                      // * ========== FAVORITE BUTTON ==========
                       InkWell(
                         onTap: () async {
                           Navigator.pop(context);
-
-                          String apiUrl;
-                          String toastMessage;
-
-                          if (favStatus == false) {
-                            // Add to Fav
-                            apiUrl =
-                                '/add-favorite-api/${book["fields"]["pk"]}/';
-                            toastMessage =
-                                "${book["fields"]["title"]} added to your favorite list";
-                          } else {
-                            // Remove from Fav
-                            apiUrl =
-                                '/remove-favorite-api/${book["fields"]["pk"]}/';
-                            toastMessage =
-                                "${book["fields"]["title"]} removed from your favorite list";
-                          }
-
-                          final response = await http.post(
-                            Uri.parse(apiUrl),
-                            headers: {
-                              'Content-Type': 'application/json',
-                              // Add any other required headers
-                            },
-                          );
-
-                          if (response.statusCode == 200) {
-                            Fluttertoast.showToast(
-                              msg: toastMessage,
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.blue[200],
-                              textColor: Colors.black,
-                              fontSize: 16.0,
-                            );
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "Failed to update favorite status",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.CENTER,
-                              timeInSecForIosWeb: 1,
-                              backgroundColor: Colors.red[200],
-                              textColor: Colors.white,
-                              fontSize: 16.0,
-                            );
-                          }
+                          addFavorite(book.pk);
                         },
                         child: Container(
                           margin: const EdgeInsets.all(5),
@@ -482,7 +434,7 @@ class _BookReviewState extends State<BookReview> {
                               favStatus == false
                                   ? 'Add To Fav'
                                   : 'Remove from Fav',
-                              style: TextStyle(
+                              style: const TextStyle(
                                 fontSize: 10,
                                 fontFamily: 'Inter',
                                 fontWeight: FontWeight.normal,
@@ -492,6 +444,7 @@ class _BookReviewState extends State<BookReview> {
                           ),
                         ),
                       ),
+                      // * ========== FAVORITE BUTTON ==========
                     ],
                   )
                 ],
@@ -505,62 +458,54 @@ class _BookReviewState extends State<BookReview> {
 
   @override
   Widget build(BuildContext context) {
-    return FutureBuilder<List<Map<String, dynamic>>>(
-      future: myBooks,
-      builder: (context, snapshot) {
-        if (snapshot.hasError) {
-          return Text('Error: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-          return const Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [CircularProgressIndicator(), Text("Getting books...")],
-            ),
-          );
+    return bookCatalog();
+  }
+
+  Consumer<BookDataProvider> bookCatalog() {
+    return Consumer<BookDataProvider>(
+      builder: (context, provider, child) {
+        if (provider.loading) {
+          return const Center(child: CircularProgressIndicator());
         } else {
-          List<Map<String, dynamic>> books = snapshot.data!;
-          print(books);
-          return GridView.builder(
-            gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-              crossAxisCount: 2,
-              childAspectRatio: 0.65,
-            ),
-            itemCount: books.length,
-            itemBuilder: (BuildContext context, int index) {
-              return Padding(
-                padding: const EdgeInsets.all(10),
-                child: InkWell(
-                  onTap: () {
-                    // Navigator.push(
-                    //   context,
-                    //   MaterialPageRoute(
-                    //     builder: (context) => BookReviewDetail(id: index + 1),
-                    //   ),
-                    // );
-                    showDetailedInfo(context, books[index], index + 1);
-                  },
-                  child: Card(
-                    clipBehavior: Clip.antiAlias,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Expanded(
-                          child: Image.network(
-                            books[index]["fields"]["thumbnail"],
-                            fit: BoxFit.cover,
+          if (provider.listBook.isEmpty) {
+            return const Center(child: Text("Buku tidak ditemukan"));
+          } else {
+            return GridView.builder(
+              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                crossAxisCount: 2,
+                childAspectRatio: 0.65,
+              ),
+              itemCount: provider.listBook.length,
+              itemBuilder: (BuildContext context, int index) {
+                return Padding(
+                  padding: const EdgeInsets.all(10),
+                  child: InkWell(
+                    onTap: () {
+                      showDetailedInfo(
+                          context, provider.listBook[index], index + 1);
+                    },
+                    child: Card(
+                      clipBehavior: Clip.antiAlias,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Expanded(
+                            child: Image.network(
+                              provider.listBook[index].fields.thumbnail,
+                              fit: BoxFit.cover,
+                            ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          );
+                );
+              },
+            );
+          }
         }
       },
     );

@@ -31,6 +31,8 @@ class MyApp extends StatelessWidget {
               create: (_) => SearchQueryProvider()),
           ChangeNotifierProvider<BookshelfProvider>(
               create: (_) => BookshelfProvider()),
+          // ChangeNotifierProvider<BookreviewProvider>(
+          //     create: (_) => BookreviewProvider()),
         ],
         child: MaterialApp(
             title: 'Flutter App',
@@ -42,8 +44,6 @@ class MyApp extends StatelessWidget {
             // * COMMENT SALAH SATUNYA UNTUK MEMILIH LAYAR (DEBUGGING)
             // ? gunakan "home: const Home()));" klo mau skip login/register
             // ? untuk keperluan debugging/working-in-progress
-            home: const LoginOrReg()));
-    // home: const Home()));
             home: const LoginOrReg()));
     // home: const Home()));
   }

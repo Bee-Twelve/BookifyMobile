@@ -24,6 +24,8 @@ class _BookFavoriteState extends State<BookFavorite> {
 
       final List<dynamic> booksData = json.decode(jsonResponse["books"]);
 
+      print(booksData);
+      print("tes 123 sdjfdsfdjfbfdsj");
       final List<Book> books =
           booksData.map((bookData) => Book.fromJson(bookData)).toList();
       print(jsonEncode(booksData));
@@ -50,13 +52,22 @@ class _BookFavoriteState extends State<BookFavorite> {
       builder: (context, snapshot) {
         if (snapshot.hasError) {
           return Text('Error: ${snapshot.error}');
-        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+        } else if (snapshot.connectionState == ConnectionState.waiting) {
+          // Display a loading indicator while waiting for books
           return const Center(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
-              children: [CircularProgressIndicator(), Text("Getting books...")],
+              children: [
+                CircularProgressIndicator(),
+                Text("Getting books..."),
+              ],
             ),
+          );
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          // Display a message when no books are available
+          return const Center(
+            child: Text("No books available."),
           );
         } else {
           List<Book> books = snapshot.data!;

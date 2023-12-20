@@ -156,17 +156,19 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                       style: ElevatedButton.styleFrom(
                           backgroundColor: const Color(0xFF4772A8)),
                       onPressed: () async {
-                        Fluttertoast.showToast(
-                            msg: "Review and rating submitted successfully",
-                            toastLength: Toast.LENGTH_SHORT,
-                            gravity: ToastGravity.CENTER,
-                            timeInSecForIosWeb: 1,
-                            backgroundColor: Colors.green[200],
-                            textColor: Colors.white,
-                            fontSize: 16.0);
+                        saveReviewAndRating();
 
-                        Navigator.pop(context);
-                        Navigator.pop(context);
+                        // Fluttertoast.showToast(
+                        //     msg: "Review and rating submitted successfully",
+                        //     toastLength: Toast.LENGTH_SHORT,
+                        //     gravity: ToastGravity.CENTER,
+                        //     timeInSecForIosWeb: 1,
+                        //     backgroundColor: Colors.green[200],
+                        //     textColor: Colors.white,
+                        //     fontSize: 16.0);
+
+                        // Navigator.pop(context);
+                        // Navigator.pop(context);
                       },
                       child: const Text(
                         "Leave a Review",
@@ -200,7 +202,10 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
       },
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
+      // Fetch the updated reviews after submitting the review
+      _bookReviewFuture = fetchBookReview();
+
       Fluttertoast.showToast(
         msg: "Review and rating submitted successfully",
         toastLength: Toast.LENGTH_SHORT,
@@ -210,7 +215,6 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
         textColor: Colors.white,
         fontSize: 16.0,
       );
-
       Navigator.pop(context);
     } else {
       Fluttertoast.showToast(
@@ -527,7 +531,7 @@ class _BookReviewDetailState extends State<BookReviewDetail> {
                                                         )),
                                                   )
                                                 ])
-                                              : widget.username == "moderator1"
+                                              : widget.username == "username"
                                                   ? InkWell(
                                                       onTap: () {
                                                         Fluttertoast.showToast(
